@@ -1,27 +1,22 @@
 import express from "express"
 import mongoose from "mongoose"
-import dotenv from "dotenv"
-import path from "path"
+import env from "dotenv"
 import cors from "cors"
-dotenv.config()
+env.config()
 const app = express()
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-});
-
-const db = mongoose.connection
-
-db.on("error", (err) => console.log(`Error connecting to database: ${err.message}`))
-db.once('open', ()=>{
-    console.log('Connected to Database!')
-})
-// const userRoutes = require('./routes/user_routes')
-// app.use('/',userRoutes)
+}).then(()=>console.log("Database is successfully connected!"))
+.catch((error)=>console.log("Error while connecting to database"))
 
 
-app.use((err, req, res, next)=>{
+import UserRoute from './routes/user_routes.js'
+app.use('/', UserRoute)
+
+
+app.use((err, req, res, next) => {
     console.log(err);
     res.status(500).send('error occured ,check it out')
 })
@@ -34,16 +29,13 @@ app.use(cors({
     credentials: true
 }))
 
-app
 
 app.get('/', (req, res) => {
     console.log("sever started");
     res.send("server started")
 })
 
-console.log(process.env.MONGODB_URL);
 let port = process.env.PORT || 5000
-console.log(port);
 app.listen(port, (req, res) => {
     console.log(`server running at the port ${port}`);
 })
