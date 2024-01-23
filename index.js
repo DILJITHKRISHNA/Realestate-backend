@@ -1,9 +1,9 @@
-const express = require('express')
-const mongoose = require('mongoose')
-require('dotenv').config()
-const path = require('path')
-const cors  = require('cors')
-
+import express from "express"
+import mongoose from "mongoose"
+import dotenv from "dotenv"
+import path from "path"
+import cors from "cors"
+dotenv.config()
 const app = express()
 
 mongoose.connect(process.env.MONGODB_URI, {
