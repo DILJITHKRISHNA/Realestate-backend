@@ -11,8 +11,16 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        unique: true,
+        require:true,
     },
+    mobile: {
+        type: Number,
+        required: true
+    },
+    // role: {
+    //     type: String,
+    //     enum: ['Admin', 'User', 'Owner']
+    // }
 },
     { timestamps: true })
 
