@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    is_block: {
+        type: Boolean
+    },
+    is_Active: {
+        type: Boolean
+    }
     // role: {
     //     type: String,
     //     enum: ['Admin', 'User', 'Owner']
