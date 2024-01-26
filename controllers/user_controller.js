@@ -9,6 +9,7 @@ export const registerUser = async (req, res) => {
 
     try {
         const { username, password, mobile, email } = req.body
+        console.log(email,"sighhhhh");
         if (!username || !email || !password || !mobile) {
             return res.status(403).json({
                 success: false,
@@ -44,8 +45,8 @@ export const registerUser = async (req, res) => {
 export const UserLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(req.body.email, "emailllllllllllllllllllllllllll");
-        const userExist = await User.findOne( req.body.email );
+        console.log(email, "emailllllllllllllllllllllllllll");
+        const userExist = await User.findOne({email:email});
 
         console.log(userExist, "userexistttttttttttttttttt");
         if (!userExist) {

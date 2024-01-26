@@ -16,7 +16,7 @@ export const sendOTP = async (req, res) => {
 
     let result = await OTP.findOne({ otp: otp });
     while (result) {
-      otp = otpGenerator.generate(6, {
+      otp = otpGenerator.generate(4, {
         upperCaseAlphabets: false,
       });
       result = await OTP.findOne({ otp: otp });
@@ -39,7 +39,7 @@ export const verifyOtp = async (req, res) => {
   console.log(otp,'igjkghjghjghj');
   const ExistOtp = await OTP.findOne({ otp: otp })
   if (!ExistOtp) {
-    return res.status(401).json({status:false, message:"invalid OTP "})
+    return res.status(401).json({success:false, message:"invalid OTP "})
   } else {    
     return res.status(200).json({ success: true, message: "User created!" });
   }

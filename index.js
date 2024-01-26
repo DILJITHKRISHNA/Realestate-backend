@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import env from "dotenv";
 import cors from "cors";
 import UserRoute from './routes/user_routes.js';
+import OwnerRoute from './routes/owner_route.js'
 
 env.config();
 const app = express();
@@ -23,6 +24,7 @@ mongoose.connect(process.env.MONGODB_URI, {
     .catch((error) => console.log("Error while connecting to the database"));
 
 app.use('/', UserRoute);
+app.use('/owner', OwnerRoute)
 
 app.use((err, req, res, next) => {
     console.log(err);

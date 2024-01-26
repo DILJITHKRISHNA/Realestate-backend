@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-const userSchema = new mongoose.Schema({
+
+const ownerSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
@@ -19,17 +20,13 @@ const userSchema = new mongoose.Schema({
     },
     is_block: {
         type: Boolean,
-        default:false
+        default: false
     },
     is_Active: {
         type: Boolean,
-        default:false
+        default: false
     }
-    // role: {
-    //     type: String,
-    //     enum: ['Admin', 'User', 'Owner']
-    // }
-},{ timestamps: true })
+})
 
-const User = mongoose.model('User', userSchema)
-export default User
+const Owner = mongoose.model('Owner', ownerSchema)
+export default Owner
