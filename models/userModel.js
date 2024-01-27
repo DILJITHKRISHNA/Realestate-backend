@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        require:true,
+        required:true,
     },
     mobile: {
         type: Number,
@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
         default:false
     },
     is_Active: {
+        type: Boolean,
+        default:false
+    },
+    is_Admin: {
         type: Boolean,
         default:false
     }

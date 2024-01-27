@@ -94,8 +94,6 @@ export const ownerVerifyOtp = async(req, res) => {
 }
 
 export const ownerLogin = async(req, res) =>{
-
-
     const {email, password} = req.body
 
     const OwnerExist = await Owner.findOne({email: email})

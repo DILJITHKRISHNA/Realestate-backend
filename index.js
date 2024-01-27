@@ -4,6 +4,7 @@ import env from "dotenv";
 import cors from "cors";
 import UserRoute from './routes/user_routes.js';
 import OwnerRoute from './routes/owner_route.js'
+import AdminRoute from './routes/admin_route.js'
 
 env.config();
 const app = express();
@@ -17,14 +18,12 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => console.log("Database is successfully connected!"))
+mongoose.connect(process.env.MONGODB_URI).then(() => console.log("Database is successfully connected!"))
     .catch((error) => console.log("Error while connecting to the database"));
 
 app.use('/', UserRoute);
 app.use('/owner', OwnerRoute)
+app.use('/admin', AdminRoute)
 
 app.use((err, req, res, next) => {
     console.log(err);
