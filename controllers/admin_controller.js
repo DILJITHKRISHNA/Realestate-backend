@@ -24,3 +24,19 @@ export const loginAdmin = async (req, res) => {
         console.log(error.message);
     }
 }
+
+export const getuserDetails = async(req, res) => {
+    console.log("enter to admin controllerrrrrr");
+    try {
+        const UserDetails = await User.find({is_Admin: false})
+        console.log(UserDetails,"usedetailsssssssssssssss");
+        if(UserDetails){
+            return res.status(200).json({success: true, message: "successfully gained user data", UserDetails})
+        }else{
+            return res.json({success: false, message: "userDetails is not exist"})
+            
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
