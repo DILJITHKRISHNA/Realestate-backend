@@ -1,4 +1,6 @@
 import User from "../models/userModel.js";
+import Owner from "../models/ownerModel.js"
+import Category from "../models/category_model.js";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
@@ -29,12 +31,59 @@ export const getuserDetails = async(req, res) => {
     console.log("enter to admin controllerrrrrr");
     try {
         const UserDetails = await User.find({is_Admin: false})
-        console.log(UserDetails,"usedetailsssssssssssssss");
         if(UserDetails){
             return res.status(200).json({success: true, message: "successfully gained user data", UserDetails})
         }else{
             return res.json({success: false, message: "userDetails is not exist"})
             
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getOwnerDetails = async(req, res) => {
+    console.log("controllersss");
+    try {
+        const OwnerDetails = await Owner.find({})
+        if(OwnerDetails){
+            return res.status(200).json({ success: true, message: "Successfull", OwnerDetails })
+        }else{
+            return res.json({ success: false, message: "Failed to get the Owner data" })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const ListCategory = async(req, res) => {
+    console.log("enter to controllererererererjjjjjjjjjjj");
+    try {
+        const {category} = req.body
+        const categoryTypeExist = await Category.findOne({category: category})
+        console.log(categoryTypeExist,"existttttttttttt");
+        if(categoryTypeExist){
+            console.log("category already exist");
+        }else{
+            const CatTypes = new Category({
+                category: category
+            })
+            await CatTypes.save().then((res)=>console.log(res,"Category saved successfully"))
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getCategoryDetails = async(req, res) => {
+    console.log("enter to getcategory detailssss");
+    try {
+        const categoryData = await Category.find({})
+        console.log(categoryData,"categoryDataaaaaaa");
+        if(categoryData){
+            return res.status(200).json({success: true, message: "category listed successfully",  categoryData})
+        }else{
+            return res.json({success: false, message: "failed to list category"})
         }
     } catch (error) {
         console.log(error);
