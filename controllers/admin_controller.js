@@ -27,28 +27,27 @@ export const loginAdmin = async (req, res) => {
     }
 }
 
-export const getuserDetails = async(req, res) => {
-    console.log("enter to admin controllerrrrrr");
+export const getuserDetails = async (req, res) => {
     try {
-        const UserDetails = await User.find({is_Admin: false})
-        if(UserDetails){
-            return res.status(200).json({success: true, message: "successfully gained user data", UserDetails})
-        }else{
-            return res.json({success: false, message: "userDetails is not exist"})
-            
+        const UserDetails = await User.find({ is_Admin: false })
+        if (UserDetails) {
+            return res.status(200).json({ success: true, message: "successfully gained user data", UserDetails })
+        } else {
+            return res.json({ success: false, message: "userDetails is not exist" })
+
         }
     } catch (error) {
         console.log(error);
     }
 }
 
-export const getOwnerDetails = async(req, res) => {
+export const getOwnerDetails = async (req, res) => {
     console.log("controllersss");
     try {
         const OwnerDetails = await Owner.find({})
-        if(OwnerDetails){
+        if (OwnerDetails) {
             return res.status(200).json({ success: true, message: "Successfull", OwnerDetails })
-        }else{
+        } else {
             return res.json({ success: false, message: "Failed to get the Owner data" })
         }
     } catch (error) {
@@ -56,35 +55,62 @@ export const getOwnerDetails = async(req, res) => {
     }
 }
 
-export const ListCategory = async(req, res) => {
+export const ListCategory = async (req, res) => {
     console.log("enter to controllererererererjjjjjjjjjjj");
     try {
-        const {category} = req.body
-        const categoryTypeExist = await Category.findOne({category: category})
-        console.log(categoryTypeExist,"existttttttttttt");
-        if(categoryTypeExist){
+        const { category } = req.body
+        const categoryTypeExist = await Category.findOne({ category: category })
+        console.log(categoryTypeExist, "existttttttttttt");
+        if (categoryTypeExist) {
             console.log("category already exist");
-        }else{
+        } else {
             const CatTypes = new Category({
                 category: category
             })
             await CatTypes.save()
-        res.status(200).json({success: true, message: "Category added", CatTypes})
+            res.status(200).json({ success: true, message: "Category added", CatTypes })
         }
     } catch (error) {
         console.log(error);
     }
 }
 
-export const getCategoryDetails = async(req, res) => {
+export const getCategoryDetails = async (req, res) => {
     console.log("enter to getcategory detailssss");
     try {
         const categoryData = await Category.find({})
-        console.log(categoryData,"categoryDataaaaaaa");
-        if(categoryData){
-            return res.status(200).json({success: true, message: "category listed successfully",  categoryData})
-        }else{
-            return res.json({success: false, message: "failed to list category"})
+        console.log(categoryData, "categoryDataaaaaaa");
+        if (categoryData) {
+            return res.status(200).json({ success: true, message: "category listed successfully", categoryData })
+        } else {
+            return res.json({ success: false, message: "failed to list category" })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const UserblockHandle = async (req, res) => {
+    console.log("enter to user block handle controller");
+    try {
+        const { id } = req.params
+        const UserData = await User.findOne({ _id: id })
+        
+        if (!UserData.is_block == true) {
+            const Updatedata = await User.updateOne(
+                { _id: id },
+                { $set: { is_block: true } }
+                )
+                console.log(Updatedata, "updated dataaaaaaaa");
+                return res.status(200).json({ success: true, message: "Successfully Unblocked User", Updatedata, UserData })
+            } else {
+            const newData = await User.updateOne(
+                { _id: id },
+                { $set: { is_block: false } }
+            );
+            console.log(newData,"newww");
+            console.log(UserData,"userdataaaa");
+            return res.json({ success: true, message: "Successfully Unblocked User", newData, UserData });
         }
     } catch (error) {
         console.log(error);
