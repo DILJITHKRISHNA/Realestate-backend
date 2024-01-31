@@ -116,3 +116,30 @@ export const UserblockHandle = async (req, res) => {
         console.log(error);
     }
 }
+
+export const OwnerblockHandle = async (req, res) => {
+    console.log("enter to Owner block handle controller");
+    try {
+        const { id } = req.params
+        const OwnerData = await Owner.findOne({ _id: id })
+        
+        if (!OwnerData.is_block == true) {
+            const Updatedata = await Owner.updateOne(
+                { _id: id },
+                { $set: { is_block: true } }
+                )
+                console.log(Updatedata, "updated dataaaaaaaa");
+                return res.status(200).json({ success: true, message: "Successfully Unblocked Owner", Updatedata, OwnerData })
+            } else {
+            const newData = await Owner.updateOne(
+                { _id: id },
+                { $set: { is_block: false } }
+            );
+            console.log(newData,"newww");
+            console.log(OwnerData,"owner dataaaaaa");
+            return res.json({ success: true, message: "Successfully Unblocked Owner", newData, OwnerData });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
