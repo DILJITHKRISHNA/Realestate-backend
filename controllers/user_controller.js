@@ -1,6 +1,6 @@
 import User from "../models/userModel.js";
 import OTP from '../models/otpModel.js'
-import bcypt from "bcrypt"
+import bcrypt from "bcrypt"
 import createSecretToken from '../utils/secretToken.js'
 import jwt from "jsonwebtoken"
 
@@ -16,7 +16,7 @@ export const registerUser = async (req, res) => {
                 message: 'All fields are required',
             });
         }
-        const hashedPassword = await bcypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const userExist = await User.findOne({ email: email });
         if (userExist) {
@@ -55,7 +55,7 @@ export const UserLogin = async (req, res) => {
                 message: 'User not found'
             });
         } else {
-            const isMatch = await bcypt.compare(password, userExist.password);
+            const isMatch = await bcrypt.compare(password, userExist.password);
             console.log(isMatch, "ISmATCHHHHH");
             if (!isMatch) {
                 return res.status(400).send({
@@ -81,3 +81,33 @@ export const UserLogin = async (req, res) => {
     }
 };
 
+export const forgotPass = async(req, res) => {
+    try {
+        const {email} = req.body
+        const UserEmail =  await User.find({email: email})
+        console.log(UserEmail,"useremaillllllllllllllllllllll");
+        if(UserEmail){
+            return res.status(200).json({success: true, message: "email is existing", UserEmail})
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const resetPassword = async(req, res) => {
+    console.log("enter to controller");
+    try {
+        const { password } = req.body
+        console.log(req.body,"bodyyyyyyy");
+        const user = await User.findOne({})
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newPass = await User.updateOne(
+            {email: user.email},
+            {$set:{password: hashedPassword}}
+            )
+
+        return res.status(200).json({success: true, message: "Password Updated successfully", newPass})            
+    } catch (error) {
+        console.log(error);
+    }
+}

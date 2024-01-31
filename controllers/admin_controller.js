@@ -68,7 +68,8 @@ export const ListCategory = async(req, res) => {
             const CatTypes = new Category({
                 category: category
             })
-            await CatTypes.save().then((res)=>console.log(res,"Category saved successfully"))
+            await CatTypes.save()
+        res.status(200).json({success: true, message: "Category added", CatTypes})
         }
     } catch (error) {
         console.log(error);
