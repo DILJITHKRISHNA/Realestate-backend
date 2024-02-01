@@ -79,7 +79,6 @@ export const getCategoryDetails = async (req, res) => {
     console.log("enter to getcategory detailssss");
     try {
         const categoryData = await Category.find({})
-        console.log(categoryData, "categoryDataaaaaaa");
         if (categoryData) {
             return res.status(200).json({ success: true, message: "category listed successfully", categoryData })
         } else {
@@ -141,5 +140,19 @@ export const OwnerblockHandle = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const EditCategory = async(req, res) => {
+    console.log("enter to edit cat controller");
+    try {
+        const { id } = req.params
+        const categoryData = await Category.findOne({_id: id})
+        console.log(categoryData,"kkkkkkkkkkk");
+        if(categoryData){
+            
+        }
+    } catch (error) {
+        
     }
 }
