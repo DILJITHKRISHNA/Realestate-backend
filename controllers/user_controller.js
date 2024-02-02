@@ -4,6 +4,14 @@ import bcrypt from "bcrypt"
 import createSecretToken from '../utils/secretToken.js'
 import jwt from "jsonwebtoken"
 
+const securePassword = async (password) => {
+    try {
+      const passwordHash = await bcrypt.hash(password, 10);
+      return passwordHash;
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
 export const registerUser = async (req, res) => {
 
@@ -109,5 +117,51 @@ export const resetPassword = async(req, res) => {
         return res.status(200).json({success: true, message: "Password Updated successfully", newPass})            
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const GooglAuth = async(req, res) => {
+    console.log('enter to backend controller');
+    try {
+        const {id, email, name, mobile} = req. body
+        const hash = await securePassword(id)
+        const user = await  User.findOne({email: email});
+        if(user){
+
+            let Googleuser = new User({
+                username: name,
+                googleId : id ,
+                email: email,
+                password: hash,
+                mobile: mobile || "1111111111",
+                is_google: true
+            })
+            
+            const GoogleData = await Googleuser.save()
+            console.log("GoogleDAta saved Successfully",GoogleData);
+            
+            if(GoogleData){
+                const token = await createSecretToken(GoogleData._id)
+                res.cookie("token", token, {
+                    withCredentials: true,
+                    httpOnly: false
+                })
+                if(token){
+                    return res.status(200).json({
+                        success:true,
+                        message:"User Logged In",
+                        token
+                    });
+                }
+            }
+        }else{
+            console.log("User Already Exists");
+            return res.json({
+                success:false,
+                message:"User already exists",
+            });            
+        }
+    } catch (error) {
+        console.log(error.message);
     }
 }

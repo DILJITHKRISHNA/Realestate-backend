@@ -25,6 +25,13 @@ const userSchema = new mongoose.Schema({
     is_Admin: {
         type: Boolean,
         default:false
+    },
+    googleId:{
+        type: String,
+      },
+    is_google: {
+        type: Boolean,
+        default: false
     }
     // role: {
     //     type: String,

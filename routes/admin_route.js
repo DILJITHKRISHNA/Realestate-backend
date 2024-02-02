@@ -1,5 +1,14 @@
-import express from  "express"
-import { getuserDetails, loginAdmin, getOwnerDetails, ListCategory, getCategoryDetails, UserblockHandle, OwnerblockHandle, EditCategory } from "../controllers/admin_controller.js"
+import express from "express"
+import {
+    getuserDetails,
+    loginAdmin,
+    getOwnerDetails,
+    ListCategory,
+    getCategoryDetails,
+    UserblockHandle,
+    OwnerblockHandle,
+    ListKyc,OwnerApproval
+} from "../controllers/admin_controller.js"
 const router = express.Router()
 
 
@@ -10,5 +19,9 @@ router.post('/admin/category', ListCategory)
 router.get('/category', getCategoryDetails)
 router.post('/admin/userlist/:id', UserblockHandle)
 router.post('/admin/ownerlist/:id', OwnerblockHandle)
-router.post('/admin/category/:id', EditCategory)
+router.get('/kyclist', ListKyc)
+router.get('/approveKyc/:id',OwnerApproval )
+
+
+
 export default router

@@ -25,7 +25,16 @@ const ownerSchema = new mongoose.Schema({
     is_Active: {
         type: Boolean,
         default: false
+    },
+    is_Kyc: {
+        type: Boolean,
+        default: false
+    },
+    is_block: {
+        type: Boolean,
+        default: false
     }
+
 })
 
 const Owner = mongoose.model('Owner', ownerSchema)
