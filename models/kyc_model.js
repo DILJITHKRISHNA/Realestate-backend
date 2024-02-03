@@ -11,7 +11,7 @@ const kycSchema = new mongoose.Schema({
         trim: true,
     },
     panCard: {
-        type: Number,
+        type: String,
         minlength: 10,
         maxlength: 10,
     },

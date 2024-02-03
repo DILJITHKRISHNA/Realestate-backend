@@ -4,6 +4,8 @@ import Category from "../models/category_model.js";
 import Kyc from '../models/kyc_model.js'
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
+import mailSender from '../utils/mailSender.js'
+import mongoose from "mongoose";
 
 export const loginAdmin = async (req, res) => {
     console.log("enter to controllerrrrrr");
@@ -43,10 +45,8 @@ export const getuserDetails = async (req, res) => {
 }
 
 export const getOwnerDetails = async (req, res) => {
-    console.log("controllersss");
     try {
         const OwnerDetails = await Kyc.find({ is_approve: true })
-        console.log(OwnerDetails, "ownererererer");
         if (OwnerDetails) {
             return res.status(200).json({ success: true, message: "Successfull", OwnerDetails })
         } else {
@@ -96,21 +96,35 @@ export const OwnerApproval = async (req, res) => {
     try {
         const id = req.params.id
         const ownerExist = await Kyc.findOne({ _id: id })
-        console.log(ownerExist, "hiiiiiiiiiiiiiiiii");
         if (ownerExist) {
             const approved = await Kyc.updateOne(
                 { _id: id },
                 { $set: { is_approve: !ownerExist.is_approve } })
 
-            console.log(approved, "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
             if (approved) {
                 const OwnerUpdate = await Owner.findOne({ email: ownerExist.email })
-                console.log(OwnerUpdate, "Ownerupdateeeeeeeeeeeeeeeeeee");
-                if(OwnerUpdate){
-                    const ownerApprove = await Owner.updateOne({email: ownerExist.email},{$set: {is_Kyc: !OwnerUpdate.is_Kyc}})
-                    console.log(ownerApprove,"ownerrrrrrapprovveeeeeeee");
-                    return res.status(200).json({ success: true, message: "Approved", OwnerUpdate })
-                }else{
+                if (OwnerUpdate) {
+                    const ownerApprove = await Owner.updateOne({ email: ownerExist.email }, { $set: { is_Kyc: !OwnerUpdate.is_Kyc } })
+
+                    if (!OwnerUpdate.is_Kyc) {
+
+                        await mailSender(OwnerUpdate.email, "VarLet - Owner Request Update",
+                            `<p>Dear ${OwnerUpdate.username},</p>
+                        <p>We are pleased to inform you that your KYC request has been approved by the admin. Your account is now verified.</p>
+                        <p>Thank you for choosing VarLet.</p>
+                        <p>Best regards,<br>VarLet</p>`
+                        );
+                    } else {
+
+                        await mailSender(OwnerUpdate.email, "VarLet - Owner Request Update",
+                            `<p>Dear ${OwnerUpdate.username},</p>
+                        <p>We regret to inform you that your KYC request has been rejected by the admin. Please review the provided information and resubmit if necessary.</p>
+                        <p>If you have any questions, feel free to contact our support team.</p>
+                        <p>Best regards,<br>Your Company Name</p>`
+                        );
+                    }
+                    return res.status(200).json({ success: true, message: "Approved", OwnerUpdate, ownerApprove });
+                } else {
                     return res.json({ success: false, message: "not approved" })
                 }
             } else {
@@ -168,16 +182,20 @@ export const UserblockHandle = async (req, res) => {
 export const OwnerblockHandle = async (req, res) => {
     console.log("enter to Owner block handle controller");
     try {
-        const { id } = req.params
-        const OwnerData = await Owner.findOne({ _id: id })
+
+        const { OwnerId } = req.params
+
+        console.log(req.params,"iiiiiiiiii");
+        const OwnerData = await Owner.findOne(OwnerId)
+        console.log(OwnerData, "................................");
         if (OwnerData) {
             const Updatedata = await Owner.updateOne(
-                { _id: id },
+                { _id: OwnerData._id },
                 { $set: { is_block: !OwnerData.is_block } }
             )
             console.log(Updatedata, "updated dataaaaaaaa");
             return res.status(200).json({ success: true, message: "Successfully Unblocked Owner", Updatedata, OwnerData })
-        } 
+        }
     } catch (error) {
         console.log(error);
     }
