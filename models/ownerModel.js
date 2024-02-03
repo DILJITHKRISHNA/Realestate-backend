@@ -30,7 +30,7 @@ const ownerSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    is_block: {
+    is_google: {
         type: Boolean,
         default: false
     }

@@ -1,4 +1,4 @@
-import bcypt from "bcrypt"
+import bcrypt from "bcrypt"
 import createSecretToken from '../utils/secretToken.js'
 import Owner from "../models/ownerModel.js";
 import OTP from "../models/otpModel.js";
@@ -6,7 +6,14 @@ import otpGenerator from 'otp-generator'
 import jwt from 'jsonwebtoken'
 import Kyc from "../models/kyc_model.js";
 
-
+const securePassword = async (password) => {
+    try {
+      const passwordHash = await bcrypt.hash(password, 10);
+      return passwordHash;
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
 export const ownerSignup = async (req, res) => {
     console.log("entered to owner signup");
@@ -20,7 +27,7 @@ export const ownerSignup = async (req, res) => {
                 message: 'All fields are required',
             });
         }
-        const hashedPassword = await bcypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const OwnerExist = await Owner.findOne({ email: email });
         if (OwnerExist) {
@@ -99,7 +106,7 @@ export const ownerLogin = async (req, res) => {
     console.log();
     const OwnerExist = await Owner.findOne({ email: email })
     if (OwnerExist) {
-        const passwordMatch = await bcypt.compare(password, OwnerExist.password)
+        const passwordMatch = await bcrypt.compare(password, OwnerExist.password)
 
         if (!passwordMatch) {
             return res.status(401).json({ success: false, message: "Invalid Password" })
@@ -114,7 +121,6 @@ export const ownerLogin = async (req, res) => {
             });
         }
     }
-
 }
 
 export const handleKycData = async (req, res) => {
@@ -141,6 +147,54 @@ export const handleKycData = async (req, res) => {
             return res.status(200).json({ success: true, message: "Kyc added successfully", OwnerKyc })
         }
 
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+export const RegisterWithGoogle = async (req, res) => {
+    console.log('enter to backend controller');
+    try {
+        const {id, email, name, mobile} = req.body
+        console.log(email);
+        const hash = await securePassword(id)
+        const owner = await Owner.findOne({email: email});
+        if(!owner){
+
+            let GoogleOwner = new Owner({
+                username: name,
+                googleId : id ,
+                email: email,
+                password: hash,
+                mobile: mobile || "1111111111",
+                is_google: true
+            })
+            
+            const GoogleData = await GoogleOwner.save()
+            console.log("GoogleDAta saved Successfully",GoogleData);
+            
+            if(GoogleData){
+                const token = await createSecretToken(GoogleData._id)
+                res.cookie("token", token, {
+                    withCredentials: true,
+                    httpOnly: false
+                })
+                if(token){
+                    return res.status(200).json({
+                        success:true,
+                        message:"Owner Logged In",
+                        token
+                    });
+                }
+            }
+        }else{
+            console.log("Owner Already Exists");
+            return res.json({
+                success:false,
+                message:"Owner already exists",
+            });            
+        }
     } catch (error) {
         console.log(error);
     }
