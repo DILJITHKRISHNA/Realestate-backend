@@ -33,6 +33,7 @@ export const loginAdmin = async (req, res) => {
 export const getuserDetails = async (req, res) => {
     try {
         const UserDetails = await User.find({ is_Admin: false })
+        console.log(UserDetails,"jiuuuu");
         if (UserDetails) {
             return res.status(200).json({ success: true, message: "successfully gained user data", UserDetails })
         } else {
