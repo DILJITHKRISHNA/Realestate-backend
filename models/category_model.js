@@ -8,6 +8,10 @@ const categorySchema = new mongoose.Schema({
     is_Active: {
         type: Boolean,
         default: false
+    },
+    is_block: {
+        type: Boolean,
+        default: false
     }
 })
 

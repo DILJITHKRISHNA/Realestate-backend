@@ -201,3 +201,25 @@ export const OwnerblockHandle = async (req, res) => {
         console.log(error);
     }
 }
+
+export const handleBlockCategory = async(req, res) => {
+    try {
+        const {id} = req.params
+        console.log(req.params,"ooo");
+        console.log(id,"iddidididididi");
+
+        const categoryExist = await Category.findOne({_id: id})
+        console.log(categoryExist.is_block,"exisssssss");
+        if(categoryExist){
+            const UpdateCat = await Category.updateOne(
+                {_id: id},
+                {$set: {is_block: !categoryExist.is_block}}
+            )
+            return res.status(200).json({ success: true, message: "Successfull", UpdateCat, categoryExist })
+        }else{
+            return res.json({ success: false, message: "Action failed" })
+        }
+    } catch (error) {
+        
+    }
+}
