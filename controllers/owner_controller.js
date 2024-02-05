@@ -15,43 +15,64 @@ const securePassword = async (password) => {
     }
   };
 
-export const ownerSignup = async (req, res) => {
+  export const ownerSignup = async (req, res) => {
     console.log("entered to owner signup");
     try {
-        const { username, password, mobile, email } = req.body
+        const { username, password, mobile, email } = req.body;
         console.log(req.body, "datas from owner controller");
         console.log(email, "fsdkjhkjfhkj");
+        
+        // Check if any of the required fields are missing or empty
         if (!username || !email || !password || !mobile) {
-            return res.status(403).json({
+            return res.status(400).json({
                 success: false,
                 message: 'All fields are required',
             });
         }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const OwnerExist = await Owner.findOne({ email: email });
-        if (OwnerExist) {
-            console.log("owner already exist");
+        const ownerExist = await Owner.findOne({ email: email });
+
+        if (ownerExist) {
+            console.log("owner already exists");
+            return res.status(409).json({
+                success: false,
+                message: 'Owner already exists',
+            });
         } else {
-            const OwnerData = new Owner({
+            const ownerData = new Owner({
                 username: username,
                 mobile: mobile,
                 password: hashedPassword,
                 email: email,
-            })
-            console.log(OwnerData, "5646546546546");
-            await OwnerData.save()
-            const token = createSecretToken(OwnerData._id);
+            });
+
+            console.log(ownerData, "5646546546546");
+
+            await ownerData.save();
+
+            const token = createSecretToken(ownerData._id);
+
             res.cookie("token", token, {
                 httpOnly: false,
-                withCredentials: true
-            })
-            return res.status(201).json({ message: "Owner signed up successfully", success: true, OwnerData });
+                withCredentials: true,
+            });
+
+            return res.status(201).json({
+                message: "Owner signed up successfully",
+                success: true,
+                ownerData,
+            });
         }
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
     }
-}
+};
 
 export const OwnersendOtp = async (req, res) => {
     try {

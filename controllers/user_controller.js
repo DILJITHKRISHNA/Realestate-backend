@@ -69,7 +69,7 @@ export const UserLogin = async (req, res) => {
             const isMatch = await bcrypt.compare(password, userExist.password);
             console.log(isMatch, "ISmATCHHHHH");
             if (!isMatch) {
-                return res.status(400).json({
+                return res.json({
                     success: false,
                     message: 'Invalid Password',
                 });
@@ -85,7 +85,7 @@ export const UserLogin = async (req, res) => {
         }
     } catch (error) {
         console.error('Error in UserLogin:', error);
-        return res.status(500).send({
+        return res.status(500).json({
             success: false,
             message: 'Internal Server Error'
         });
