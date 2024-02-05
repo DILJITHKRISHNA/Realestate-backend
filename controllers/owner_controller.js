@@ -145,6 +145,7 @@ export const ownerLogin = async (req, res) => {
 }
 
 export const handleKycData = async (req, res) => {
+    //validatoins
     try {
         const { username, email, address, state, zipCode, occupation, city, country, panCard } = req.body
         console.log(req.body,"dataaa");

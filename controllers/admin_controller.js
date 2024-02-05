@@ -64,14 +64,16 @@ export const ListCategory = async (req, res) => {
         const { category } = req.body
         const categoryTypeExist = await Category.findOne({ category: category })
         console.log(categoryTypeExist, "existttttttttttt");
-        if (categoryTypeExist) {
+        const SameCat = category.toLowerCase()
+        if (categoryTypeExist && SameCat) {
             console.log("category already exist");
+            return res.json({success: false, message: "Category already exists"})
         } else {
             const CatTypes = new Category({
                 category: category
             })
             await CatTypes.save()
-            res.status(200).json({ success: true, message: "Category added", CatTypes })
+          return res.status(200).json({ success: true, message: "Category added", CatTypes })
         }
     } catch (error) {
         console.log(error);

@@ -6,18 +6,18 @@ import jwt from "jsonwebtoken"
 
 const securePassword = async (password) => {
     try {
-      const passwordHash = await bcrypt.hash(password, 10);
-      return passwordHash;
+        const passwordHash = await bcrypt.hash(password, 10);
+        return passwordHash;
     } catch (err) {
-      console.log(err.message);
+        console.log(err.message);
     }
-  };
+};
 
 export const registerUser = async (req, res) => {
 
     try {
         const { username, password, mobile, email } = req.body
-        console.log(email,"sighhhhh");
+        console.log(email, "sighhhhh");
         if (!username || !email || !password || !mobile) {
             return res.status(403).json({
                 success: false,
@@ -57,7 +57,7 @@ export const UserLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         console.log(email, "emailllllllllllllllllllllllllll");
-        const userExist = await User.findOne({email:email});
+        const userExist = await User.findOne({ email: email });
 
         console.log(userExist, "userexistttttttttttttttttt");
         if (!userExist) {
@@ -92,102 +92,105 @@ export const UserLogin = async (req, res) => {
     }
 };
 
-export const forgotPass = async(req, res) => {
+export const forgotPass = async (req, res) => {
     try {
-        const {email} = req.body
-        const UserEmail =  await User.find({email: email})
-        console.log(UserEmail,"useremaillllllllllllllllllllll");
-        if(UserEmail){
-            return res.status(200).json({success: true, message: "email is existing", UserEmail})
+        const { email } = req.body
+        const UserEmail = await User.find({ email: email })
+        console.log(UserEmail, "useremaillllllllllllllllllllll");
+        if (UserEmail) {
+            return res.status(200).json({ success: true, message: "email is existing", UserEmail })
         }
     } catch (error) {
         console.log(error);
     }
 }
 
-export const resetPassword = async(req, res) => {
+export const resetPassword = async (req, res) => {
     console.log("enter to controller");
     try {
-        const { password } = req.body
-        console.log(req.body,"bodyyyyyyy");
+        const { password, confirmPassword } = req.body
+        console.log(req.body, "bodyyyyyyy");
         const user = await User.findOne({})
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newPass = await User.updateOne(
-            {email: user.email},
-            {$set:{password: hashedPassword}}
-            )
+        if (password === confirmPassword) {
 
-        return res.status(200).json({success: true, message: "Password Updated successfully", newPass})            
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const newPass = await User.updateOne(
+                { email: user.email },
+                { $set: { password: hashedPassword } }
+            )
+                console.log(newPass,"papssss neweww");
+            return res.status(200).json({ success: true, message: "Password Updated successfully", newPass })
+        }
     } catch (error) {
         console.log(error);
     }
 }
 
-export const GooglAuthRegister = async(req, res) => {
+export const GooglAuthRegister = async (req, res) => {
     console.log('enter to backend controller');
     try {
-        const {id, email, name, mobile} = req.body
+        const { id, email, name, mobile } = req.body
         console.log(email);
         const hash = await securePassword(id)
-        const user = await User.findOne({email: email});
-        if(!user){
+        const user = await User.findOne({ email: email });
+        if (!user) {
 
             let Googleuser = new User({
                 username: name,
-                googleId : id ,
+                googleId: id,
                 email: email,
                 password: hash,
                 mobile: mobile || "1111111111",
                 is_google: true
             })
-            
+
             const GoogleData = await Googleuser.save()
-            console.log("GoogleDAta saved Successfully",GoogleData);
-            
-            if(GoogleData){
+            console.log("GoogleDAta saved Successfully", GoogleData);
+
+            if (GoogleData) {
                 const token = await createSecretToken(GoogleData._id)
                 res.cookie("token", token, {
                     withCredentials: true,
                     httpOnly: false
                 })
-                if(token){
+                if (token) {
                     return res.status(200).json({
-                        success:true,
-                        message:"User Logged In",
+                        success: true,
+                        message: "User Logged In",
                         token
                     });
                 }
             }
-        }else{
+        } else {
             console.log("User Already Exists");
             return res.json({
-                success:false,
-                message:"User already exists",
-            });            
+                success: false,
+                message: "User already exists",
+            });
         }
     } catch (error) {
         console.log(error.message);
     }
 }
 
-export const GooglAuthLogin = async(req, res) => {
+export const GooglAuthLogin = async (req, res) => {
     try {
-        const {email, password} = req.body
+        const { email, password } = req.body
         console.log("pkacjuu");
-        const user = await User.findOne({email: email})
-        if(user){
+        const user = await User.findOne({ email: email })
+        if (user) {
             const PassMatch = await bcrypt.compare(email, user.email)
-            if(PassMatch){
-                let token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1h"})
-                console.log(token,"token ssjsjsjsjsjsj");
+            if (PassMatch) {
+                let token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
+                console.log(token, "token ssjsjsjsjsjsj");
                 return res.status(200).json({
                     success: true,
                     message: "Google Logged In",
                     token,
                     user
                 })
-            }else{
-                return  res.status(400).json({
+            } else {
+                return res.status(400).json({
                     success: false,
                     message: 'Invalid Password'
                 })
