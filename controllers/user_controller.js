@@ -28,7 +28,10 @@ export const registerUser = async (req, res) => {
 
         const userExist = await User.findOne({ email: email });
         if (userExist) {
-            console.log("user already exist");
+            return res.json({
+                success: false,
+                message: 'User Already Exists',
+            });
         } else {
             const userData = new User({
                 username: username,
@@ -58,21 +61,21 @@ export const UserLogin = async (req, res) => {
 
         console.log(userExist, "userexistttttttttttttttttt");
         if (!userExist) {
-            return res.status(400).send({
+            return res.json({
                 success: false,
-                message: 'User not found'
+                message: 'User not found, please sign up'
             });
         } else {
             const isMatch = await bcrypt.compare(password, userExist.password);
             console.log(isMatch, "ISmATCHHHHH");
             if (!isMatch) {
-                return res.status(400).send({
+                return res.status(400).json({
                     success: false,
                     message: 'Invalid Password',
                 });
             } else {
                 let token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-                return res.status(200).send({
+                return res.status(200).json({
                     success: true,
                     token: token,
                     user: userExist,
