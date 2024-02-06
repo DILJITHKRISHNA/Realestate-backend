@@ -4,25 +4,26 @@ import Owner from "../models/ownerModel.js";
 import OTP from "../models/otpModel.js";
 import otpGenerator from 'otp-generator'
 import jwt from 'jsonwebtoken'
-import Kyc from "../models/kyc_model.js";
+import Kyc from "../models/KycModel.js";
+import Property from "../models/PropertyModel.js";
+// import Property from '../models/'
 
 const securePassword = async (password) => {
     try {
-      const passwordHash = await bcrypt.hash(password, 10);
-      return passwordHash;
+        const passwordHash = await bcrypt.hash(password, 10);
+        return passwordHash;
     } catch (err) {
-      console.log(err.message);
+        console.log(err.message);
     }
-  };
+};
 
-  export const ownerSignup = async (req, res) => {
+export const ownerSignup = async (req, res) => {
     console.log("entered to owner signup");
     try {
         const { username, password, mobile, email } = req.body;
         console.log(req.body, "datas from owner controller");
         console.log(email, "fsdkjhkjfhkj");
-        
-        // Check if any of the required fields are missing or empty
+
         if (!username || !email || !password || !mobile) {
             return res.status(400).json({
                 success: false,
@@ -102,7 +103,7 @@ export const OwnersendOtp = async (req, res) => {
         });
     } catch (error) {
         console.log(error.message);
-        return res.status(500).json({ success: false, error: error.message });
+        return res.status(500).json({ success: false, message: error.message });
     }
 }
 
@@ -148,11 +149,11 @@ export const handleKycData = async (req, res) => {
     //validatoins
     try {
         const { username, email, address, state, zipCode, occupation, city, country, panCard } = req.body
-        console.log(req.body,"dataaa");
-        const OwnerData = await Kyc.findOne({email: email})
+        console.log(req.body, "dataaa");
+        const OwnerData = await Kyc.findOne({ email: email })
         if (OwnerData) {
             console.log("ownerData already exist");
-        }else{
+        } else {
             const OwnerKyc = new Kyc({
                 username: username,
                 email: email,
@@ -178,44 +179,99 @@ export const handleKycData = async (req, res) => {
 export const RegisterWithGoogle = async (req, res) => {
     console.log('enter to backend controller');
     try {
-        const {id, email, name, mobile} = req.body
+        const { id, email, name, mobile } = req.body
         console.log(email);
         const hash = await securePassword(id)
-        const owner = await Owner.findOne({email: email});
-        if(!owner){
+        const owner = await Owner.findOne({ email: email });
+        if (!owner) {
 
             let GoogleOwner = new Owner({
                 username: name,
-                googleId : id ,
+                googleId: id,
                 email: email,
                 password: hash,
                 mobile: mobile || "1111111111",
                 is_google: true
             })
-            
+
             const GoogleData = await GoogleOwner.save()
-            console.log("GoogleDAta saved Successfully",GoogleData);
-            
-            if(GoogleData){
+            console.log("GoogleDAta saved Successfully", GoogleData);
+
+            if (GoogleData) {
                 const token = await createSecretToken(GoogleData._id)
                 res.cookie("token", token, {
                     withCredentials: true,
                     httpOnly: false
                 })
-                if(token){
+                if (token) {
                     return res.status(200).json({
-                        success:true,
-                        message:"Owner Logged In",
+                        success: true,
+                        message: "Owner Logged In",
                         token
                     });
                 }
             }
-        }else{
+        } else {
             console.log("Owner Already Exists");
             return res.json({
-                success:false,
-                message:"Owner already exists",
-            });            
+                success: false,
+                message: "Owner already exists",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const GetKycData = async (req, res) => {
+    console.log("enterejhwejrthwejrkjw");
+    try {
+        const kycData = await Kyc.find({})
+        console.log(kycData, "dataat kyccc");
+        if (kycData) {
+            return res.status(200).json({ success: true, message: "Successfully get the kyc data", kycData })
+        } else {
+            return res.json({ success: false, message: "failed to get kyc data" })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const AddProperty = async (req, res) => {
+    try {
+        const { propety_title, property_type, expected_Rent, property_details,
+            doc, imageUrls, ratings, country, state, district, address, zip_code,
+            built_up_area, number_bedrooms, number_bathrooms, number_balconies,
+            water_accessibility, number_floors } = req.body
+            console.log(req.body);
+
+        const DataExist = await Property.find({})
+        if (DataExist) {
+            return res.json({ success: true, message: "Property Data already exists" })
+        } else {
+            const newProperty = await Property({
+                property_title: propety_title,
+                property_type: property_type,
+                expected_Rent: expected_Rent,
+                property_details: property_details,
+                doc: doc,
+                imageUrls: imageUrls,
+                // ratings
+                country: country,
+                state: state, 
+                district: district, 
+                address: address,
+                zip_code: zip_code,
+                water_accessibility: water_accessibility,
+                built_up_area: built_up_area,
+                number_bedrooms: number_bedrooms,
+                number_bathrooms: number_bathrooms,
+                number_balconies: number_balconies,
+                number_floors: number_floors
+            })
+            const AddProperty = await newProperty.save()
+            return res.status(200).json({ success: true, message: "Property added successfully", newProperty })
         }
     } catch (error) {
         console.log(error);

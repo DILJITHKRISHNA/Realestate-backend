@@ -1,5 +1,5 @@
 import express from 'express'
-import { OwnersendOtp, RegisterWithGoogle, handleKycData, ownerLogin, ownerSignup, ownerVerifyOtp } from '../controllers/owner_controller.js'
+import { AddProperty, GetKycData, OwnersendOtp, RegisterWithGoogle, handleKycData, ownerLogin, ownerSignup, ownerVerifyOtp } from '../controllers/OwnerController.js'
 
 const router = express.Router()
 
@@ -10,6 +10,8 @@ router.post('/owner/verify-otp',ownerVerifyOtp )
 router.post('/owner/login', ownerLogin)
 router.post('/owner/profile', handleKycData)
 router.post('/owner/ownerRegisterWithGoogle', RegisterWithGoogle)
+router.get('/kyc',GetKycData)
+router.post('/owner/property', AddProperty)
 
 
 export default router
