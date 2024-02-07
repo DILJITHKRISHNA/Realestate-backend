@@ -6,8 +6,8 @@ import {
     registerUser,
     resetPassword,
     UserLogin
-} from '../controllers/user_controller.js';
-import { sendOTP, verifyOtp } from '../controllers/otp_controller.js';
+} from '../controllers/UserController.js';
+import { sendOTP, verifyOtp } from '../controllers/OtpController.js';
 const router = express.Router()
 
 router.post('/signup', registerUser)

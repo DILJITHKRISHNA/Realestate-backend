@@ -111,8 +111,9 @@ export const resetPassword = async (req, res) => {
         const { password, confirmPassword } = req.body
         console.log(req.body, "bodyyyyyyy");
         const user = await User.findOne({})
-        if (password === confirmPassword) {
-
+        if (password !== confirmPassword) {
+            return res.json({success: false, message: "Both Password is incorrect"})
+        }
             const hashedPassword = await bcrypt.hash(password, 10);
             const newPass = await User.updateOne(
                 { email: user.email },
@@ -120,7 +121,6 @@ export const resetPassword = async (req, res) => {
             )
                 console.log(newPass,"papssss neweww");
             return res.status(200).json({ success: true, message: "Password Updated successfully", newPass })
-        }
     } catch (error) {
         console.log(error);
     }

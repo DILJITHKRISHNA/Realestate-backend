@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import mailSender from '../utils/mailSender.js'
 import mongoose from "mongoose";
+import { isRegExp } from "util/types";
 
 export const loginAdmin = async (req, res) => {
     console.log("enter to controllerrrrrr");
@@ -33,7 +34,7 @@ export const loginAdmin = async (req, res) => {
 export const getuserDetails = async (req, res) => {
     try {
         const UserDetails = await User.find({ is_Admin: false })
-        console.log(UserDetails,"jiuuuu");
+        console.log(UserDetails, "jiuuuu");
         if (UserDetails) {
             return res.status(200).json({ success: true, message: "successfully gained user data", UserDetails })
         } else {
@@ -62,23 +63,30 @@ export const ListCategory = async (req, res) => {
     console.log("enter to controllererererererjjjjjjjjjjj");
     try {
         const { category } = req.body
-        const categoryTypeExist = await Category.findOne({ category: category })
+       
+        const categoryTypeExist = await Category.findOne({ category: { $regex: new RegExp(category, 'i') } });
+
+
+
         console.log(categoryTypeExist, "existttttttttttt");
-        const SameCat = category.toLowerCase()
-        if (categoryTypeExist && SameCat) {
-            console.log("category already exist");
-            return res.json({success: false, message: "Category already exists"})
+
+        if (categoryTypeExist) {
+            console.log("category already exists");
+            return res.json({ success: false, message: "Category already exists" })
         } else {
             const CatTypes = new Category({
                 category: category
             })
             await CatTypes.save()
-          return res.status(200).json({ success: true, message: "Category added", CatTypes })
+            return res.status(200).json({ success: true, message: "Category added", CatTypes })
         }
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 }
+
+
 
 export const ListKyc = async (req, res) => {
     console.log("enter to list kyc controllerre");
@@ -188,7 +196,7 @@ export const OwnerblockHandle = async (req, res) => {
 
         const { OwnerId } = req.params
 
-        console.log(req.params,"iiiiiiiiii");
+        console.log(req.params, "iiiiiiiiii");
         const OwnerData = await Owner.findOne(OwnerId)
         console.log(OwnerData, "................................");
         if (OwnerData) {
@@ -204,24 +212,24 @@ export const OwnerblockHandle = async (req, res) => {
     }
 }
 
-export const handleBlockCategory = async(req, res) => {
+export const handleBlockCategory = async (req, res) => {
     try {
-        const {id} = req.params
-        console.log(req.params,"ooo");
-        console.log(id,"iddidididididi");
+        const { id } = req.params
+        console.log(req.params, "ooo");
+        console.log(id, "iddidididididi");
 
-        const categoryExist = await Category.findOne({_id: id})
-        console.log(categoryExist.is_block,"exisssssss");
-        if(categoryExist){
+        const categoryExist = await Category.findOne({ _id: id })
+        console.log(categoryExist.is_block, "exisssssss");
+        if (categoryExist) {
             const UpdateCat = await Category.updateOne(
-                {_id: id},
-                {$set: {is_block: !categoryExist.is_block}}
+                { _id: id },
+                { $set: { is_block: !categoryExist.is_block } }
             )
             return res.status(200).json({ success: true, message: "Successfull", UpdateCat, categoryExist })
-        }else{
+        } else {
             return res.json({ success: false, message: "Action failed" })
         }
     } catch (error) {
-        
+
     }
 }

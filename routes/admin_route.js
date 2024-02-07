@@ -7,8 +7,9 @@ import {
     getCategoryDetails,
     UserblockHandle,
     OwnerblockHandle,
-    ListKyc,OwnerApproval, handleBlockCategory
-} from "../controllers/admin_controller.js"
+    ListKyc, OwnerApproval,
+    handleBlockCategory
+} from "../controllers/AdminController.js"
 const router = express.Router()
 
 
@@ -20,8 +21,8 @@ router.get('/category', getCategoryDetails)
 router.post('/admin/userlist/:id', UserblockHandle)
 router.post('/admin/ownerlist/:id', OwnerblockHandle)
 router.get('/kyclist', ListKyc)
-router.get('/approveKyc/:id',OwnerApproval )
-router.post('/admin/category/:id',handleBlockCategory )
+router.get('/approveKyc/:id', OwnerApproval)
+router.post('/admin/category/:id', handleBlockCategory)
 
 
 
