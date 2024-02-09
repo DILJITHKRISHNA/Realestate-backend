@@ -6,6 +6,7 @@ import otpGenerator from 'otp-generator'
 import jwt from 'jsonwebtoken'
 import Kyc from "../models/KycModel.js";
 import Property from "../models/PropertyModel.js";
+import { ObjectId } from "mongodb";
 // import Property from '../models/'
 
 const securePassword = async (password) => {
@@ -240,40 +241,74 @@ export const GetKycData = async (req, res) => {
 
 export const AddProperty = async (req, res) => {
     try {
-        const { propety_title, property_type, expected_Rent, property_details,
-            doc, imageUrls, ratings, country, state, district, address, zip_code,
-            built_up_area, number_bedrooms, number_bathrooms, number_balconies,
-            water_accessibility, number_floors } = req.body
-            console.log(req.body);
+        const {
+            // owner,
+            title,
+            type,
+            rent,
+            additionalDetails,
+            // doc,
+            // imageUrls,
+            country,
+            state,
+            district,
+            address,
+            zip_code,
+            buildUpArea,
+            NoOfBedrooms,
+            NoOFBathrooms,
+            NoOfBalconies,
+            waterAccessibility,
+            NoOfFloors,
+        } = req.body;
+       console.log( title,
+        type,
+        rent,
+        additionalDetails,
+        country,
+        state,
+        district,
+        address,
+        zip_code,
+        buildUpArea,
+        NoOfBedrooms,
+        NoOFBathrooms,
+        NoOfBalconies,
+        waterAccessibility,
+        NoOfFloors,"datassssssssssssssss");
+        // Check if the property with the same title already exists
+        const propertyExist = await Property.findOne({ title: title });
+        if (propertyExist) {
+            return res.json({ success: false, message: "Property with the same title already exists" });
+        }else{
 
-        const DataExist = await Property.find({})
-        if (DataExist) {
-            return res.json({ success: true, message: "Property Data already exists" })
-        } else {
-            const newProperty = await Property({
-                property_title: propety_title,
-                property_type: property_type,
-                expected_Rent: expected_Rent,
-                property_details: property_details,
-                doc: doc,
-                imageUrls: imageUrls,
-                // ratings
+            
+            const newProperty = new Property({
+                title: title,
+                type:type,
+                Rent: rent,
+                details: additionalDetails,
                 country: country,
-                state: state, 
-                district: district, 
+                state: state,
                 address: address,
+                district: district,
                 zip_code: zip_code,
-                water_accessibility: water_accessibility,
-                built_up_area: built_up_area,
-                number_bedrooms: number_bedrooms,
-                number_bathrooms: number_bathrooms,
-                number_balconies: number_balconies,
-                number_floors: number_floors
+                buildUpArea: buildUpArea,
+                NoOFBathrooms: NoOFBathrooms,
+                NoOfBedrooms: NoOfBedrooms,
+                NoOfBalconies: NoOfBalconies,
+                waterAccessibility: waterAccessibility,
+                NoOfFloors: NoOfFloors
             })
-            const AddProperty = await newProperty.save()
-            return res.status(200).json({ success: true, message: "Property added successfully", newProperty })
+            
+            // Save the newProperty to the database
+            await newProperty.save();
+            
+            console.log("Property saved successfully");
+            return res.status(200).json({ success: true, message: "Property added successfully", newProperty });
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
-}
+};

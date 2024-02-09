@@ -56,10 +56,10 @@ export const registerUser = async (req, res) => {
 export const UserLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(email, "emailllllllllllllllllllllllllll");
+        console.log(email, password, "emailllllllllllllllllllllllllll");
         const userExist = await User.findOne({ email: email });
 
-        console.log(userExist, "userexistttttttttttttttttt");
+
         if (!userExist) {
             return res.json({
                 success: false,
@@ -106,25 +106,31 @@ export const forgotPass = async (req, res) => {
 }
 
 export const resetPassword = async (req, res) => {
-    console.log("enter to controller");
     try {
-        const { password, confirmPassword } = req.body
-        console.log(req.body, "bodyyyyyyy");
-        const user = await User.findOne({})
-        if (password !== confirmPassword) {
-            return res.json({success: false, message: "Both Password is incorrect"})
+
+        const { password, email } = req.body;
+
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        } else {
+            const hashedPassword = await securePassword(password);
+
+
+
+            const updatedUser = await User.updateOne({ email: email }, { $set: { password: hashedPassword } });
+
+
+
+            return res.status(200).json({ updatedUser, success: true, message: "Password updated successfully" });
         }
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const newPass = await User.updateOne(
-                { email: user.email },
-                { $set: { password: hashedPassword } }
-            )
-                console.log(newPass,"papssss neweww");
-            return res.status(200).json({ success: true, message: "Password Updated successfully", newPass })
+
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
     }
-}
+};
 
 export const GooglAuthRegister = async (req, res) => {
     console.log('enter to backend controller');

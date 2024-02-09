@@ -3,42 +3,41 @@ import mongoose from 'mongoose'
 
 
  const PropertySchema = new mongoose.Schema({
-        owner: {
-          type: ObjectId,
-          ref: "User",
-          required: true,
-        },
-        property_title: {
+        // owner: {
+        //   type: ObjectId,
+        //   ref: "User",
+        //   required: true,
+        // },
+        title: {
           type: String,
           required: true,
         },
-        property_type: {
+        type: {
           type: String,
           required: true,
         },
-        expected_Rent: {
+        Rent: {
           type: Number,
           required: true,
         },
-        property_details: {
+        details: {
           type: String,
           required: true,
         },
-        doc: {
-          type: String,
-          required: true,
-        },
-        ImageUrls: {
-          type: [String],
-          required: true,
-        },
-        ratings: [
-          {
-            type: ObjectId,
-            ref: "Review",
-          },
-        ],
-        property_location: {
+        // doc: {
+        //   type: String,
+        //   required: true,
+        // },
+        // ImageUrls: {
+        //   type: [String],
+        // },
+        // ratings: [
+        //   {
+        //     type: ObjectId,
+        //     ref: "Review",
+        //   },
+        // ],
+        location: {
           country: {
             type: String,
           },
