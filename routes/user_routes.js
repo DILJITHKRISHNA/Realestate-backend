@@ -1,6 +1,7 @@
 import express from 'express'
 import {
     forgotPass,
+    GetProperty,
     GooglAuthLogin,
     GooglAuthRegister,
     registerUser,
@@ -18,6 +19,7 @@ router.post('/forgotPassword', forgotPass)
 router.post('/resetpassword', resetPassword)
 router.post('/userRegisterWithGoogle', GooglAuthRegister)
 router.post('/userLoginWithGoogle', GooglAuthLogin)
+router.get('/property', GetProperty)
 
 export default router
 

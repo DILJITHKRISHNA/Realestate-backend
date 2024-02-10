@@ -241,71 +241,36 @@ export const GetKycData = async (req, res) => {
 
 export const AddProperty = async (req, res) => {
     try {
-        const {
-            // owner,
-            title,
-            type,
-            rent,
-            additionalDetails,
-            // doc,
-            // imageUrls,
-            country,
-            state,
-            district,
-            address,
-            zip_code,
-            buildUpArea,
-            NoOfBedrooms,
-            NoOFBathrooms,
-            NoOfBalconies,
-            waterAccessibility,
-            NoOfFloors,
-        } = req.body;
-       console.log( title,
-        type,
-        rent,
-        additionalDetails,
-        country,
-        state,
-        district,
-        address,
-        zip_code,
-        buildUpArea,
-        NoOfBedrooms,
-        NoOFBathrooms,
-        NoOfBalconies,
-        waterAccessibility,
-        NoOfFloors,"datassssssssssssssss");
-        // Check if the property with the same title already exists
-        const propertyExist = await Property.findOne({ title: title });
+        const {id} = req.params
+        console.log(id,"id gottt");
+        const { title, rent, type, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
+
+        const propertyExist = await Property.findOne({ name: title });
         if (propertyExist) {
             return res.json({ success: false, message: "Property with the same title already exists" });
-        }else{
-
-            
+        } else {
             const newProperty = new Property({
-                title: title,
-                type:type,
+                name: title,
+                type: type,
                 Rent: rent,
                 details: additionalDetails,
-                country: country,
-                state: state,
-                address: address,
-                district: district,
-                zip_code: zip_code,
+                bathrooms: bathroom,
+                bedrooms: bedroom,
+                furnished: furnished,
+                parking: parking,
                 buildUpArea: buildUpArea,
-                NoOFBathrooms: NoOFBathrooms,
-                NoOfBedrooms: NoOfBedrooms,
-                NoOfBalconies: NoOfBalconies,
-                waterAccessibility: waterAccessibility,
-                NoOfFloors: NoOfFloors
-            })
-            
-            // Save the newProperty to the database
-            await newProperty.save();
-            
-            console.log("Property saved successfully");
-            return res.status(200).json({ success: true, message: "Property added successfully", newProperty });
+                FloorCount: FloorCount,
+                location: location,
+                country: country,
+                city: city,
+                ownerRef: id
+            });
+
+            console.log(newProperty, "new Propertyyy");
+
+            const saved = await newProperty.save();
+
+            return res.status(200).json({ success: true, message: "Property added successfully", saved });
         }
     } catch (error) {
         console.error(error);

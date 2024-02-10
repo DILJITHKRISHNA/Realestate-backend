@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import OTP from '../models/otpModel.js'
+import Property from '../models/PropertyModel.js'
 import bcrypt from "bcrypt"
 import createSecretToken from '../utils/secretToken.js'
 import jwt from "jsonwebtoken"
@@ -204,5 +205,18 @@ export const GooglAuthLogin = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+export const GetProperty = async(req, res) => {
+    try {
+        const property = await Property.find({})
+        if(property){
+            return res.status(200).json({success: true, message: "Properties Fetched Successfully!", data : property}); 
+        }else{
+            return res.json({success: false, message: "Failed to fetch property"})
+        }
+    } catch (error) {
+        console.log(error);
     }
 }

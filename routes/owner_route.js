@@ -11,7 +11,7 @@ router.post('/owner/login', ownerLogin)
 router.post('/owner/profile', handleKycData)
 router.post('/owner/ownerRegisterWithGoogle', RegisterWithGoogle)
 router.get('/kyc',GetKycData)
-router.post('/owner/property', AddProperty)
+router.post(`/owner/property/:id`, AddProperty)
 
 
 export default router

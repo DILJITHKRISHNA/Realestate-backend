@@ -1,99 +1,73 @@
-import { ObjectId } from 'mongodb'
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
+const PropertySchema = new mongoose.Schema({
 
- const PropertySchema = new mongoose.Schema({
-        // owner: {
-        //   type: ObjectId,
-        //   ref: "User",
-        //   required: true,
-        // },
-        title: {
-          type: String,
-          required: true,
-        },
-        type: {
-          type: String,
-          required: true,
-        },
-        Rent: {
-          type: Number,
-          required: true,
-        },
-        details: {
-          type: String,
-          required: true,
-        },
-        // doc: {
-        //   type: String,
-        //   required: true,
-        // },
-        // ImageUrls: {
-        //   type: [String],
-        // },
-        // ratings: [
-        //   {
-        //     type: ObjectId,
-        //     ref: "Review",
-        //   },
-        // ],
-        location: {
-          country: {
-            type: String,
-          },
-          state: {
-            type: String,
-          },
-          district: {
-            type: String,
-          },
+  name: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  type: {
+    type: String,
+    required: true
+  },
+  Rent: {
+    type: String,
+    required: true,
+  },
+  details: {
+    type: String,
+    required: true
+  },
+  bathrooms: {
+    type: Number,
+    required: true
+  },
+  bedrooms: {
+    type: Number,
+    required: true
+  },
+  furnished: {
+    type: Boolean,
+    required: true,
+  },
+  parking: {
+    type: Boolean,
+    required: true
+  },
+  imageUrls: {
+    type: Array,
+    required: true
+  },
+  buildUpArea: {
+    type: String,
+    required: true
+  },
+  FloorCount: {
+    type: Number,
+    required: true
+  },
+  location: {
+    type: String,
+    required: true
+  },
+  country: {
+    type: String,
+    required: true
+  },
+  city: {
+    type: String,
+    required: true
+  },
+  ownerRef: {
+    type: String,
+    required: true
+  },
+  is_verified: {
+    type: Boolean,
+  },
+}, { timestamps: true });
 
-          address: {
-            type: String,
-          },
-          zip_code: {
-            type: Number,
-          },
-        },
-        details: {
-          built_up_area: {
-            type: Number,
-          },
-          number_bedrooms: {
-            type: Number,
-          },
-          number_bathrooms: {
-            type: Number,
-          },
-          number_balconies: {
-            type: Number,
-          },
-          water_accessibilty: {
-            type: String,
-          },
-          number_floors: {
-            type: Number,
-          },
-        },
-        is_available: {
-          type: Boolean,
-          default: true,
-        },
-        isApproved: {
-          type: Boolean,
-          default: false,
-        },
-        is_Reserved: {
-          type: Boolean,
-          default: false,
-        },
-        is_Booked: {
-          type: Boolean,
-          default: false,
-        },
-      },
-      { timestamps: true })
+const Property = mongoose.model('Property', PropertySchema);
 
-      const Property = mongoose.model('Property', PropertySchema)
-
-      export default Property
+export default Property;
