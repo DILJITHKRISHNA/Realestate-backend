@@ -210,7 +210,7 @@ export const GooglAuthLogin = async (req, res) => {
 
 export const GetProperty = async(req, res) => {
     try {
-        const property = await Property.find({})
+        const property = await Property.find({is_verified: true})
         if(property){
             return res.status(200).json({success: true, message: "Properties Fetched Successfully!", data : property}); 
         }else{

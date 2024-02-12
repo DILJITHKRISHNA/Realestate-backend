@@ -8,7 +8,9 @@ import {
     UserblockHandle,
     OwnerblockHandle,
     ListKyc, OwnerApproval,
-    handleBlockCategory
+    handleBlockCategory,
+    getPropertydetails,
+    PropertyStatusUpdate
 } from "../controllers/AdminController.js"
 const router = express.Router()
 
@@ -23,6 +25,8 @@ router.post('/admin/ownerlist/:id', OwnerblockHandle)
 router.get('/kyclist', ListKyc)
 router.get('/approveKyc/:id', OwnerApproval)
 router.post('/admin/category/:id', handleBlockCategory)
+router.get('/propertylist', getPropertydetails)
+router.post('/propertystatus/:id', PropertyStatusUpdate)
 
 
 

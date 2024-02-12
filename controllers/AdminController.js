@@ -7,6 +7,7 @@ import bcrypt from "bcrypt"
 import mailSender from '../utils/mailSender.js'
 import mongoose from "mongoose";
 import { isRegExp } from "util/types";
+import Property from "../models/PropertyModel.js";
 
 export const loginAdmin = async (req, res) => {
     console.log("enter to controllerrrrrr");
@@ -63,7 +64,7 @@ export const ListCategory = async (req, res) => {
     console.log("enter to controllererererererjjjjjjjjjjj");
     try {
         const { category } = req.body
-       
+
         const categoryTypeExist = await Category.findOne({ category: { $regex: new RegExp(category, 'i') } });
 
 
@@ -231,5 +232,44 @@ export const handleBlockCategory = async (req, res) => {
         }
     } catch (error) {
 
+    }
+}
+
+export const getPropertydetails = async (req, res) => {
+    console.log("enter to getProperty Details controller");
+    try {
+        const propertyDetails = await Property.find({})
+        // .sort([['createdAt', 'descending']]);
+        console.log(propertyDetails,"propertydetailssss");
+        if(propertyDetails){
+            return res.status(200).json({success: true, message: "Successfully got the  details of properties ", data : propertyDetails}); 
+        }else{
+            return res.json({success: false, message: "Failed to get Details"})
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const PropertyStatusUpdate = async (req, res) => {
+    console.log("enter to PropertyStatusUpdate  controller");
+    try {
+        const {id} =req.params
+        const propertyDetails = await Property.findOne({_id: id});
+        // .sort([['createdAt', 'descending']]);
+        console.log(propertyDetails,"propertydetailssss in status function");
+        if(propertyDetails){
+
+            const ApproveStatus = await Property.updateOne(
+                {_id: id},
+                {$set: {is_verified: !propertyDetails.is_verified}}
+            )
+            console.log(propertyDetails,"detaillssss");
+            console.log(ApproveStatus,"statsusssssssssssss");
+            return res.status(200).json({success: true, message: "Action Successfull", ApproveStatus, propertyDetails}); 
+        }else{
+            return res.json({success: false, message: "Failed to change status"})
+        }
+    } catch (error) {
+        console.log(error);
     }
 }

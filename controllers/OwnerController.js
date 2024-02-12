@@ -245,7 +245,7 @@ export const AddProperty = async (req, res) => {
         console.log(id,"id gottt");
         const { title, rent, type, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
 
-        const propertyExist = await Property.findOne({ name: title });
+        const propertyExist = await Property.findOne({ is_verified: true });
         if (propertyExist) {
             return res.json({ success: false, message: "Property with the same title already exists" });
         } else {
@@ -263,7 +263,8 @@ export const AddProperty = async (req, res) => {
                 location: location,
                 country: country,
                 city: city,
-                ownerRef: id
+                ownerRef: id,
+                is_verified: false
             });
 
             console.log(newProperty, "new Propertyyy");
