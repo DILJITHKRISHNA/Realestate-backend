@@ -240,36 +240,56 @@ export const getPropertydetails = async (req, res) => {
     try {
         const propertyDetails = await Property.find({})
         // .sort([['createdAt', 'descending']]);
-        console.log(propertyDetails,"propertydetailssss");
-        if(propertyDetails){
-            return res.status(200).json({success: true, message: "Successfully got the  details of properties ", data : propertyDetails}); 
-        }else{
-            return res.json({success: false, message: "Failed to get Details"})
+        console.log(propertyDetails, "propertydetailssss");
+        if (propertyDetails) {
+            return res.status(200).json({ success: true, message: "Successfully got the  details of properties ", data: propertyDetails });
+        } else {
+            return res.json({ success: false, message: "Failed to get Details" })
         }
     } catch (error) {
         console.log(error);
     }
 }
 export const PropertyStatusUpdate = async (req, res) => {
-    console.log("enter to PropertyStatusUpdate  controller");
+    console.log("enter to PropertyStatusUpdate controller");
     try {
-        const {id} =req.params
-        const propertyDetails = await Property.findOne({_id: id});
-        // .sort([['createdAt', 'descending']]);
-        console.log(propertyDetails,"propertydetailssss in status function");
-        if(propertyDetails){
+        const { id } = req.params;
+        const { action } = req.body; 
 
-            const ApproveStatus = await Property.updateOne(
-                {_id: id},
-                {$set: {is_verified: !propertyDetails.is_verified}}
-            )
-            console.log(propertyDetails,"detaillssss");
-            console.log(ApproveStatus,"statsusssssssssssss");
-            return res.status(200).json({success: true, message: "Action Successfull", ApproveStatus, propertyDetails}); 
-        }else{
-            return res.json({success: false, message: "Failed to change status"})
+        const propertyDetails = await Property.findOne({ _id: id });
+        console.log(propertyDetails, "propertydetailssss in status function");
+
+        if (propertyDetails) {
+            let updateData = {};
+
+            if (action === 'approve') {
+                updateData = { is_verified: true };
+            } else if (action === 'disapprove') {
+                updateData = { is_verified: false };
+            } else {
+                return res.json({ success: false, message: "Invalid action" });
+            }
+
+            const updatedStatus = await Property.updateOne(
+                { _id: id },
+                { $set: updateData }
+            );
+
+            console.log(propertyDetails, "detaillssss");
+            console.log(updatedStatus, "statusssssssssssssss");
+
+            return res.status(200).json({
+                    success: true,
+                    message: "Action successful",
+                    updatedStatus,
+                    propertyDetails,
+                });
+        } else {
+            return res.json({ success: false, message: "Failed to change status" });
         }
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
-}
+};
+

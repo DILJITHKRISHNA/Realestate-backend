@@ -242,10 +242,9 @@ export const GetKycData = async (req, res) => {
 export const AddProperty = async (req, res) => {
     try {
         const {id} = req.params
-        console.log(id,"id gottt");
         const { title, rent, type, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
 
-        const propertyExist = await Property.findOne({ is_verified: true });
+        const propertyExist = await Property.findOne({name: title});
         if (propertyExist) {
             return res.json({ success: false, message: "Property with the same title already exists" });
         } else {
@@ -266,7 +265,6 @@ export const AddProperty = async (req, res) => {
                 ownerRef: id,
                 is_verified: false
             });
-
             console.log(newProperty, "new Propertyyy");
 
             const saved = await newProperty.save();
