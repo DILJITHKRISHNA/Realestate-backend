@@ -1,6 +1,7 @@
 import express from 'express'
 import {
     forgotPass,
+    GetImages,
     GetProperty,
     GooglAuthLogin,
     GooglAuthRegister,
@@ -22,6 +23,8 @@ router.post('/userRegisterWithGoogle', GooglAuthRegister)
 router.post('/userLoginWithGoogle', GooglAuthLogin)
 router.get('/property', GetProperty)
 router.get('/property/:id', SinglyFetchProperty)
+router.get('/owner/images', GetImages)
+
 
 export default router
 

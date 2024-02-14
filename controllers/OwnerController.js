@@ -6,7 +6,7 @@ import otpGenerator from 'otp-generator'
 import jwt from 'jsonwebtoken'
 import Kyc from "../models/KycModel.js";
 import Property from "../models/PropertyModel.js";
-import { ObjectId } from "mongodb";
+import cloudinary from "../utils/cloudinary.js";
 // import Property from '../models/'
 
 const securePassword = async (password) => {
@@ -242,8 +242,7 @@ export const GetKycData = async (req, res) => {
 export const AddProperty = async (req, res) => {
     try {
         const {id} = req.params
-        const { title, rent, type,state, balconies, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
-
+        const { title, rent, type, state, balconies, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
         const propertyExist = await Property.findOne({name: title});
         if (propertyExist) {
             return res.json({ success: false, message: "Property with the same title already exists" });
@@ -263,6 +262,7 @@ export const AddProperty = async (req, res) => {
                 country: country,
                 balcony: balconies,
                 city: city,
+                // imageUrls,
                 state: state,
                 ownerRef: id,
                 is_verified: false
@@ -278,3 +278,21 @@ export const AddProperty = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
+
+export const ImageUpload = async(req, res) => {
+    console.log("0000000000000000000");
+    try {
+        const fileStr = req.body.data
+
+        const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
+            upload_preset: 'dev_setups'
+        })
+
+        console.log(uploadedResponse,"uploadresponse");
+        return res.json({success: true, message: 'image Uploaded Successfully', uploadedResponse})
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+

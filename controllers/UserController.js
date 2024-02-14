@@ -4,6 +4,7 @@ import Property from '../models/PropertyModel.js'
 import bcrypt from "bcrypt"
 import createSecretToken from '../utils/secretToken.js'
 import jwt from "jsonwebtoken"
+import cloudinary from "../utils/cloudinary.js";
 
 const securePassword = async (password) => {
     try {
@@ -208,29 +209,47 @@ export const GooglAuthLogin = async (req, res) => {
     }
 }
 
-export const GetProperty = async(req, res) => {
+export const GetProperty = async (req, res) => {
     // console.log(id,"iddddddd");
     try {
-        const property = await Property.find({is_verified: true })
-        if(property){
-            return res.status(200).json({success: true, message: "Properties Fetched Successfully!", data : property}); 
-        }else{
-            return res.json({success: false, message: "Failed to fetch property"})
+        const property = await Property.find({ is_verified: true })
+        if (property) {
+            return res.status(200).json({ success: true, message: "Properties Fetched Successfully!", data: property });
+        } else {
+            return res.json({ success: false, message: "Failed to fetch property" })
         }
     } catch (error) {
         console.log(error);
     }
 }
-export const SinglyFetchProperty = async(req, res) => {
+export const SinglyFetchProperty = async (req, res) => {
     console.log("fififi");
     try {
-        console.log(id,"iddddddd");
-        const property = await Property.findOne({_id: id })
-        if(property){
-            return res.status(200).json({success: true, message: "Properties Fetched Successfully!", data : property}); 
-        }else{
-            return res.json({success: false, message: "Failed to fetch property"})
+        console.log(id, "iddddddd");
+        const property = await Property.findOne({ _id: id })
+        if (property) {
+            return res.status(200).json({ success: true, message: "Properties Fetched Successfully!", data: property });
+        } else {
+            return res.json({ success: false, message: "Failed to fetch property" })
         }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const GetImages = async (req, res) => {
+    console.log("22222222222222");
+    try {
+        let result = await cloudinary.api.resources({
+            type: 'upload',
+            prefix: 'dev_setups/', 
+            max_results: 30,
+        });
+        const publicids = result.resources.map((file) => file.public_id)
+        console.log(publicids,"public iddsss");
+
+        return res.json({ success: true, message: 'image got Successfully', publicids, result })
+
     } catch (error) {
         console.log(error);
     }
