@@ -209,8 +209,23 @@ export const GooglAuthLogin = async (req, res) => {
 }
 
 export const GetProperty = async(req, res) => {
+    // console.log(id,"iddddddd");
     try {
-        const property = await Property.find({is_verified: true})
+        const property = await Property.find({is_verified: true })
+        if(property){
+            return res.status(200).json({success: true, message: "Properties Fetched Successfully!", data : property}); 
+        }else{
+            return res.json({success: false, message: "Failed to fetch property"})
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const SinglyFetchProperty = async(req, res) => {
+    console.log("fififi");
+    try {
+        console.log(id,"iddddddd");
+        const property = await Property.findOne({_id: id })
         if(property){
             return res.status(200).json({success: true, message: "Properties Fetched Successfully!", data : property}); 
         }else{

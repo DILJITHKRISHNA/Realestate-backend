@@ -6,6 +6,7 @@ import {
     GooglAuthRegister,
     registerUser,
     resetPassword,
+    SinglyFetchProperty,
     UserLogin
 } from '../controllers/UserController.js';
 import { sendOTP, verifyOtp } from '../controllers/OtpController.js';
@@ -20,6 +21,7 @@ router.post('/resetpassword', resetPassword)
 router.post('/userRegisterWithGoogle', GooglAuthRegister)
 router.post('/userLoginWithGoogle', GooglAuthLogin)
 router.get('/property', GetProperty)
+router.get('/property/:id', SinglyFetchProperty)
 
 export default router
 

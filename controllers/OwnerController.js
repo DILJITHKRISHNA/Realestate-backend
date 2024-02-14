@@ -242,7 +242,7 @@ export const GetKycData = async (req, res) => {
 export const AddProperty = async (req, res) => {
     try {
         const {id} = req.params
-        const { title, rent, type, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
+        const { title, rent, type,state, balconies, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
 
         const propertyExist = await Property.findOne({name: title});
         if (propertyExist) {
@@ -261,7 +261,9 @@ export const AddProperty = async (req, res) => {
                 FloorCount: FloorCount,
                 location: location,
                 country: country,
+                balcony: balconies,
                 city: city,
+                state: state,
                 ownerRef: id,
                 is_verified: false
             });

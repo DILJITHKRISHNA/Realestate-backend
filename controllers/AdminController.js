@@ -239,8 +239,6 @@ export const getPropertydetails = async (req, res) => {
     console.log("enter to getProperty Details controller");
     try {
         const propertyDetails = await Property.find({})
-        // .sort([['createdAt', 'descending']]);
-        console.log(propertyDetails, "propertydetailssss");
         if (propertyDetails) {
             return res.status(200).json({ success: true, message: "Successfully got the  details of properties ", data: propertyDetails });
         } else {

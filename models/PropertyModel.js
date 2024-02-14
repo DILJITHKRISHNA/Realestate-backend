@@ -59,8 +59,16 @@ const PropertySchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  state: {
+    type: String,
+    required: true
+  },
   ownerRef: {
     type: String,
+    required: true
+  },
+  balcony:{
+    type: Number,
     required: true
   },
   is_verified: {
