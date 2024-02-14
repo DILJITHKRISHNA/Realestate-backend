@@ -236,7 +236,7 @@ export const handleBlockCategory = async (req, res) => {
 }
 
 export const getPropertydetails = async (req, res) => {
-    console.log("enter to getProperty Details controller");
+    console.log("enter to getProperty Details controllereree");
     try {
         const propertyDetails = await Property.find({})
         if (propertyDetails) {
