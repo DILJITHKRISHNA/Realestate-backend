@@ -1,10 +1,11 @@
 import express from 'express'
 import {
+    CheckIsBooked,
     forgotPass,
-    GetImages,
     GetProperty,
     GooglAuthLogin,
     GooglAuthRegister,
+    PaymentData,
     registerUser,
     resetPassword,
     SinglyFetchProperty,
@@ -23,7 +24,8 @@ router.post('/userRegisterWithGoogle', GooglAuthRegister)
 router.post('/userLoginWithGoogle', GooglAuthLogin)
 router.get('/property', GetProperty)
 router.get('/property/:id', SinglyFetchProperty)
-router.get('/owner/images', GetImages)
+router.post('/property/bookproperty/:id', CheckIsBooked)
+router.post('/property/payment/:id', PaymentData)
 
 
 export default router

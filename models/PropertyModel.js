@@ -74,6 +74,9 @@ const PropertySchema = new mongoose.Schema({
   is_verified: {
     type: Boolean,
   },
+  is_Booked: {
+    type: Boolean,
+  },
 }, { timestamps: true });
 
 const Property = mongoose.model('Property', PropertySchema);

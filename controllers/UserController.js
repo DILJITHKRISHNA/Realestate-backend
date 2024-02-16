@@ -5,6 +5,7 @@ import bcrypt from "bcrypt"
 import createSecretToken from '../utils/secretToken.js'
 import jwt from "jsonwebtoken"
 import cloudinary from "../utils/cloudinary.js";
+import Booking from "../models/BookModel.js";
 
 const securePassword = async (password) => {
     try {
@@ -236,20 +237,48 @@ export const SinglyFetchProperty = async (req, res) => {
         console.log(error);
     }
 }
-
-export const GetImages = async (req, res) => {
-    console.log("22222222222222");
+export const CheckIsBooked = async (req, res) => {
+    console.log("CheckIsBooked");
     try {
-        let result = await cloudinary.api.resources({
-            type: 'upload',
-            prefix: 'dev_setups/', 
-            max_results: 30,
-        });
-        const publicids = result.resources.map((file) => file.public_id)
-        console.log(publicids,"public iddsss");
+        const {id} = req.params
+        console.log(id, "iddddddd");
+        const property = await Property.findOne({ _id: id})
+        console.log(property.is_Booked,"isbokk ceckkk");
+        if (property.is_Booked === false) {
+            return res.status(200).json({ success: true, message: "Properties Booking On process!", property });
+        } else {
+            return res.json({ success: false, message: "Propert is already Booked", property })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const PaymentData = async (req, res) => {
+    console.log("PaymentData");
+    try {
+        const { id } = req.params
+        console.log(id, "property idddd");
+        const {name, contact, email, relocationDate} = req.body
+        const booking = await Booking.findOne({email: email})
+        if (!booking) {
+            const property = await  Property.findOneAndUpdate(
+                {_id: id},
+                {$set:{is_Booked: true}}
+            )
+                
+            const NewBooking = new Booking({
+                username: name,
+                mobile: contact,
+                email: email,
+                relocationDate: relocationDate,
+                is_canceled: false
+            })
+            const newBookedData = NewBooking.save() 
 
-        return res.json({ success: true, message: 'image got Successfully', publicids, result })
-
+            return res.status(200).json({ success: true, message: "Properties Booking On process!", newBookedData, property });
+        } else {
+            return res.json({ success: false, message: "Property is already Booked" })
+        }
     } catch (error) {
         console.log(error);
     }

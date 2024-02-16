@@ -7,7 +7,6 @@ import jwt from 'jsonwebtoken'
 import Kyc from "../models/KycModel.js";
 import Property from "../models/PropertyModel.js";
 import cloudinary from "../utils/cloudinary.js";
-// import Property from '../models/'
 
 const securePassword = async (password) => {
     try {
@@ -239,14 +238,18 @@ export const GetKycData = async (req, res) => {
     }
 }
 
+
 export const AddProperty = async (req, res) => {
     try {
-        const {id} = req.params
-        const { title, rent, type, state, balconies, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
-        const propertyExist = await Property.findOne({name: title});
+        const { id } = req.params
+        console.log(req.body, "bodddddddmasssssss");
+        const { title, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
+        const propertyExist = await Property.findOne({ name: title });
         if (propertyExist) {
             return res.json({ success: false, message: "Property with the same title already exists" });
         } else {
+
+  
             const newProperty = new Property({
                 name: title,
                 type: type,
@@ -262,10 +265,11 @@ export const AddProperty = async (req, res) => {
                 country: country,
                 balcony: balconies,
                 city: city,
-                // imageUrls,
+                imageUrls: imageUrl,
                 state: state,
                 ownerRef: id,
-                is_verified: false
+                is_verified: false,
+                is_Booked: false
             });
             console.log(newProperty, "new Propertyyy");
 
@@ -279,7 +283,7 @@ export const AddProperty = async (req, res) => {
     }
 };
 
-export const ImageUpload = async(req, res) => {
+export const ImageUpload = async (req, res) => {
     console.log("0000000000000000000");
     try {
         const fileStr = req.body.data
@@ -288,8 +292,13 @@ export const ImageUpload = async(req, res) => {
             upload_preset: 'dev_setups'
         })
 
-        console.log(uploadedResponse,"uploadresponse");
-        return res.json({success: true, message: 'image Uploaded Successfully', uploadedResponse})
+        const id = uploadedResponse && uploadedResponse.public_id;
+        console.log(id, "9999999999999999");
+
+
+
+        console.log(uploadedResponse, "uploadresponse");
+        return res.json({ success: true, message: 'image Uploaded Successfully', uploadedResponse })
 
     } catch (error) {
         console.log(error);
