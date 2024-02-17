@@ -5,6 +5,7 @@ import {
     GetProperty,
     GooglAuthLogin,
     GooglAuthRegister,
+    Payment,
     PaymentData,
     registerUser,
     resetPassword,
@@ -26,6 +27,7 @@ router.get('/property', GetProperty)
 router.get('/property/:id', SinglyFetchProperty)
 router.post('/property/bookproperty/:id', CheckIsBooked)
 router.post('/property/payment/:id', PaymentData)
+router.post('/property/paymentreq/:id', Payment)
 
 
 export default router

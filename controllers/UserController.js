@@ -6,6 +6,7 @@ import createSecretToken from '../utils/secretToken.js'
 import jwt from "jsonwebtoken"
 import cloudinary from "../utils/cloudinary.js";
 import Booking from "../models/BookModel.js";
+import Stripe from 'stripe'
 
 const securePassword = async (password) => {
     try {
@@ -240,10 +241,10 @@ export const SinglyFetchProperty = async (req, res) => {
 export const CheckIsBooked = async (req, res) => {
     console.log("CheckIsBooked");
     try {
-        const {id} = req.params
+        const { id } = req.params
         console.log(id, "iddddddd");
-        const property = await Property.findOne({ _id: id})
-        console.log(property.is_Booked,"isbokk ceckkk");
+        const property = await Property.findOne({ _id: id })
+        console.log(property.is_Booked, "isbokk ceckkk");
         if (property.is_Booked === false) {
             return res.status(200).json({ success: true, message: "Properties Booking On process!", property });
         } else {
@@ -257,28 +258,55 @@ export const PaymentData = async (req, res) => {
     console.log("PaymentData");
     try {
         const { id } = req.params
-        console.log(id, "property idddd");
-        const {name, contact, email, relocationDate} = req.body
-        const booking = await Booking.findOne({email: email})
+        const { name, contact, email, relocationDate } = req.body
+        const booking = await Booking.findOne({ email: email })
         if (!booking) {
-            const property = await  Property.findOneAndUpdate(
-                {_id: id},
-                {$set:{is_Booked: true}}
+            const property = await Property.findOneAndUpdate(
+                { _id: id },
+                { $set: { is_Booked: true } }
             )
-                
+
             const NewBooking = new Booking({
                 username: name,
                 mobile: contact,
+                property_id: req.params.id,
                 email: email,
                 relocationDate: relocationDate,
                 is_canceled: false
             })
-            const newBookedData = NewBooking.save() 
+            const newBookedData = NewBooking.save()
 
             return res.status(200).json({ success: true, message: "Properties Booking On process!", newBookedData, property });
         } else {
             return res.json({ success: false, message: "Property is already Booked" })
         }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const Payment = async (req, res) => {
+    try {
+        const { id } = req.params
+        console.log(id, "idddddd");
+        const stripe = new Stripe(
+            "sk_test_51OjybQSJlwdVAH1acaTS5QXkZo6XPw9bsN3GpYmHoTWqY3OJ6Wmn48zUqCDrIBd1fTgSoYCrWv4rgycK4luQdOWq00bnDmHAay"
+        )
+        const property = await Property.findById({ _id: id })
+        console.log(property, "propertyy");
+        const RentAmount = property.Rent
+        console.log(RentAmount, "rent amount");
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: RentAmount * 100,
+            currency: "inr",
+            automatic_payment_methods: {
+                enabled: true
+            },
+        })
+        console.log(paymentIntent, 'Payment Intent');
+        return res.status(200).send({ success: true, message: "client id passed to client", clientSecret: paymentIntent.client_secret })
+
     } catch (error) {
         console.log(error);
     }
