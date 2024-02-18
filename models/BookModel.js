@@ -10,13 +10,20 @@ const bookSchema = new mongoose.Schema({
     re_location: {
         type: Date,
     },
+    bookingStatus: {
+        type: String,
+        default: "pending",
+    }, 
+    Rent: {
+        type: Number
+    },
     email: {
         type: String,
     },
     is_canceled: {
-        type:Boolean
+        type: Boolean
     }
-},{timestamps: true})
+}, { timestamps: true })
 
 const Booking = mongoose.model('Booking', bookSchema)
 export default Booking

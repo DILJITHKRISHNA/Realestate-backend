@@ -1,4 +1,6 @@
 import User from "../models/userModel.js";
+import env from 'dotenv'
+env.config()
 import OTP from '../models/otpModel.js'
 import Property from '../models/PropertyModel.js'
 import bcrypt from "bcrypt"
@@ -254,44 +256,13 @@ export const CheckIsBooked = async (req, res) => {
         console.log(error);
     }
 }
-export const PaymentData = async (req, res) => {
-    console.log("PaymentData");
-    try {
-        const { id } = req.params
-        const { name, contact, email, relocationDate } = req.body
-        const booking = await Booking.findOne({ email: email })
-        if (!booking) {
-            const property = await Property.findOneAndUpdate(
-                { _id: id },
-                { $set: { is_Booked: true } }
-            )
 
-            const NewBooking = new Booking({
-                username: name,
-                mobile: contact,
-                property_id: req.params.id,
-                email: email,
-                relocationDate: relocationDate,
-                is_canceled: false
-            })
-            const newBookedData = NewBooking.save()
-
-            return res.status(200).json({ success: true, message: "Properties Booking On process!", newBookedData, property });
-        } else {
-            return res.json({ success: false, message: "Property is already Booked" })
-        }
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 export const Payment = async (req, res) => {
     try {
         const { id } = req.params
         console.log(id, "idddddd");
-        const stripe = new Stripe(
-            "sk_test_51OjybQSJlwdVAH1acaTS5QXkZo6XPw9bsN3GpYmHoTWqY3OJ6Wmn48zUqCDrIBd1fTgSoYCrWv4rgycK4luQdOWq00bnDmHAay"
-        )
+        const stripe = new Stripe(process.env.STRIPE_KEY)
         const property = await Property.findById({ _id: id })
         console.log(property, "propertyy");
         const RentAmount = property.Rent
@@ -304,10 +275,47 @@ export const Payment = async (req, res) => {
                 enabled: true
             },
         })
-        console.log(paymentIntent, 'Payment Intent');
         return res.status(200).send({ success: true, message: "client id passed to client", clientSecret: paymentIntent.client_secret })
 
     } catch (error) {
         console.log(error);
     }
 }
+
+export const PaymentSuccess = async (req, res) => {
+    console.log("enter to payment success");
+    try {
+        const { data } = req.body
+        const { id } = req.params
+        console.log(id, data, "iddd backend");
+        const rent = await Property.findById({ _id: id })
+        const booking = await Booking.findOne({ email: data.email })
+
+        if (!booking) {
+            const property = await Property.findOneAndUpdate(
+                { _id: id },
+                { $set: { is_Booked: true } }
+            )
+
+            const NewBooking = new Booking({
+                username: data.name,
+                mobile: data.contact,
+                property_id: id,
+                Rent: rent.Rent,
+                email: data.email,
+                bookingStatus: "Success",
+                relocationDate: data.relocationDate,
+                is_canceled: false
+            })
+            const newBookedData = NewBooking.save()
+
+            return res.status(200).json({ success: true, message: "Property booked Successfull", property });
+        } else {
+            return res.json({ success: false, message: "Property is already Booked" })
+
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
