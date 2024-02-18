@@ -8,6 +8,7 @@ import mailSender from '../utils/mailSender.js'
 import mongoose from "mongoose";
 import { isRegExp } from "util/types";
 import Property from "../models/PropertyModel.js";
+import Booking from "../models/BookModel.js"
 
 export const loginAdmin = async (req, res) => {
     console.log("enter to controllerrrrrr");
@@ -291,3 +292,16 @@ export const PropertyStatusUpdate = async (req, res) => {
     }
 };
 
+export const getBookingData = async (req, res) => {
+    try {
+        const Bookingdata = await Booking.find({})
+        console.log(Bookingdata,"dataaa");
+        if(Bookingdata){
+            return res.status(200).json({success: true, message: "Data fetched successfully.", data : Bookingdata});  
+        } else {
+            return res.json({success: false, message: " Error while fetching data"})
+        }
+    } catch (error) {
+        console.log("getBooking Data", error);
+    }
+}

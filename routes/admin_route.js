@@ -10,7 +10,8 @@ import {
     ListKyc, OwnerApproval,
     handleBlockCategory,
     getPropertydetails,
-    PropertyStatusUpdate
+    PropertyStatusUpdate,
+    getBookingData
 } from "../controllers/AdminController.js"
 const router = express.Router()
 
@@ -27,6 +28,7 @@ router.get('/approveKyc/:id', OwnerApproval)
 router.post('/admin/category/:id', handleBlockCategory)
 router.get('/propertylist', getPropertydetails)
 router.post('/propertystatus/:id', PropertyStatusUpdate)
+router.get('/bookingsdata', getBookingData)
 
 
 

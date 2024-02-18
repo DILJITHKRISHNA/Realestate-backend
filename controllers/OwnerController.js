@@ -249,7 +249,7 @@ export const AddProperty = async (req, res) => {
             return res.json({ success: false, message: "Property with the same title already exists" });
         } else {
 
-  
+
             const newProperty = new Property({
                 name: title,
                 type: type,
@@ -305,3 +305,16 @@ export const ImageUpload = async (req, res) => {
     }
 }
 
+export const getPropertyData = async (req, res) => {
+    try {
+        const property = await Property.find({})
+
+        if(property){
+            return res.status(200).json({success: true, message: "get data from Propety Database", property})
+        }else{
+            return res.status(500).json({ success: false, message: "Error while fetching Data" });
+        }
+    } catch (error) {
+        console.log("get property",error);
+    }
+}
