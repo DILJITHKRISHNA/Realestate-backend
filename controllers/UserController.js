@@ -319,3 +319,39 @@ export const PaymentSuccess = async (req, res) => {
     }
 }
 
+export const PaymentHistory = async (req, res) => {
+    try {
+        const history = await Booking.find({}).sort([['date', -1]]);
+        if (history) {
+            return res.status(200).json({ success: true, message: "Got the payment history", history })
+        } else {
+            return res.json({ success: false, message: "error while fetching payment history" })
+        }
+    } catch (error) {
+        console.log('PaymentHistoryy', error);
+    }
+}
+export const cancelPayment = async (req, res) => {
+    try {
+        const { propId } = req.body
+        console.log(propId, "porpertyyy iddd");
+        const { id } = req.params
+        console.log(id, 'bookng idd');
+        const history = await Booking.find({ _id: id })
+        if (history) {
+            const updateHistory = await Booking.updateOne(
+                { _id: id },
+                { $set: { is_canceled: true } }
+            )
+            const updateProperty = await Property.findByIdAndUpdate(
+                { _id: propId },
+                { $set: { is_Booked: false } }
+            )
+            return res.status(200).json({ success: true, message: "Booking Canceled", updateHistory, updateProperty })
+        } else {
+            return res.json({ success: false, message: "error while fetching payment history" })
+        }
+    } catch (error) {
+        console.log('PaymentHistoryy', error);
+    }
+}

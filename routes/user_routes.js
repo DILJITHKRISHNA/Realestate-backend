@@ -1,11 +1,13 @@
 import express from 'express'
 import {
+    cancelPayment,
     CheckIsBooked,
     forgotPass,
     GetProperty,
     GooglAuthLogin,
     GooglAuthRegister,
     Payment,
+    PaymentHistory,
     PaymentSuccess,
     registerUser,
     resetPassword,
@@ -28,6 +30,8 @@ router.get('/property/:id', SinglyFetchProperty)
 router.post('/property/bookproperty/:id', CheckIsBooked)
 router.post('/property/paymentreq/:id', Payment)
 router.post('/property/success/:id', PaymentSuccess)
+router.get('/paymenthistory', PaymentHistory)
+router.post('/paymenthistory/:id', cancelPayment)
 
 
 export default router

@@ -6,6 +6,7 @@ import otpGenerator from 'otp-generator'
 import jwt from 'jsonwebtoken'
 import Kyc from "../models/KycModel.js";
 import Property from "../models/PropertyModel.js";
+import Bookings from '../models/BookModel.js'
 import cloudinary from "../utils/cloudinary.js";
 
 const securePassword = async (password) => {
@@ -316,5 +317,19 @@ export const getPropertyData = async (req, res) => {
         }
     } catch (error) {
         console.log("get property",error);
+    }
+}
+export const GetBookingData = async (req, res) => {
+    console.log("enter to getbooking dataa");
+    try {
+        const GetData = await Bookings.find({})
+
+        if(GetData){
+            return res.status(200).json({success: true, message: "get data from Bookings", GetData})
+        }else{
+            return res.status(500).json({ success: false, message: "Error while fetching Data" });
+        }
+    } catch (error) {
+        console.log("GetBooking Data",error);
     }
 }

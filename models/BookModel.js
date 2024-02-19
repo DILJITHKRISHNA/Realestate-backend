@@ -13,9 +13,12 @@ const bookSchema = new mongoose.Schema({
     bookingStatus: {
         type: String,
         default: "pending",
-    }, 
+    },
     Rent: {
         type: Number
+    },
+    property_id: {
+        type: String,
     },
     email: {
         type: String,
