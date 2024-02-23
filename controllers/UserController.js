@@ -338,6 +338,8 @@ export const cancelPayment = async (req, res) => {
         const { id } = req.params
         console.log(id, 'bookng idd');
         const history = await Booking.find({ _id: id })
+        const rentAmount = history.Rent
+        console.log(rentAmount,"77777777777777777-----------");
         if (history) {
             const updateHistory = await Booking.updateOne(
                 { _id: id },
@@ -347,6 +349,7 @@ export const cancelPayment = async (req, res) => {
                 { _id: propId },
                 { $set: { is_Booked: false } }
             )
+
             return res.status(200).json({ success: true, message: "Booking Canceled", updateHistory, updateProperty })
         } else {
             return res.json({ success: false, message: "error while fetching payment history" })
