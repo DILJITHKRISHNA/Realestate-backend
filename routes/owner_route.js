@@ -1,5 +1,5 @@
 import express from 'express'
-import { AddProperty, GetBookingData, GetKycData, ImageUpload, OwnersendOtp, RegisterWithGoogle, getPropertyData, handleKycData, ownerLogin, ownerSignup, ownerVerifyOtp } from '../controllers/OwnerController.js'
+import { AddProperty, EditPropertyData, GetBookingData, GetKycData, ImageUpload, OwnersendOtp, RegisterWithGoogle, getPropertyData, handleKycData, hideProperty, ownerLogin, ownerSignup, ownerVerifyOtp } from '../controllers/OwnerController.js'
 
 const router = express.Router()
 
@@ -14,6 +14,8 @@ router.get('/kyc',GetKycData)
 router.post(`/owner/property/:id`, AddProperty)
 router.post('/owner/uploadimage', ImageUpload)
 router.get('/owner/getproperty', getPropertyData)
+router.get('/owner/editproperty/:id', EditPropertyData)
+router.post('/owner/hideproperty/:id', hideProperty)
 router.get('/owner/FetchBookings', GetBookingData)
 
 

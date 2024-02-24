@@ -11,7 +11,8 @@ import {
     handleBlockCategory,
     getPropertydetails,
     PropertyStatusUpdate,
-    getBookingData
+    getBookingData,
+    PropertyDetails
 } from "../controllers/AdminController.js"
 const router = express.Router()
 
@@ -29,6 +30,7 @@ router.post('/admin/category/:id', handleBlockCategory)
 router.get('/propertylist', getPropertydetails)
 router.post('/propertystatus/:id', PropertyStatusUpdate)
 router.get('/bookingsdata', getBookingData)
+router.get('/propertylist/:id', PropertyDetails)
 
 
 

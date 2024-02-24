@@ -310,13 +310,49 @@ export const getPropertyData = async (req, res) => {
     try {
         const property = await Property.find({})
 
-        if(property){
-            return res.status(200).json({success: true, message: "get data from Propety Database", property})
-        }else{
+        if (property) {
+            return res.status(200).json({ success: true, message: "get data from Propety Database", property })
+        } else {
             return res.status(500).json({ success: false, message: "Error while fetching Data" });
         }
     } catch (error) {
-        console.log("get property",error);
+        console.log("get property", error);
+    }
+}
+export const EditPropertyData = async (req, res) => {
+    try {
+        const { id } = req.params
+        // const { title, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
+        const property = await Property.find({ _id: id })
+
+        if (property) {
+            // let updateProperty = await Property.updateMany(
+            //     { _id : id },
+
+            // )
+
+            return res.status(200).json({ success: true, message: "get data from Propety Database", property })
+        } else {
+            return res.status(500).json({ success: false, message: "Error while fetching Data" });
+        }
+    } catch (error) {
+        console.log("get property", error);
+    }
+}
+export const hideProperty = async (req, res) => {
+    try {
+        const { id } = req.params
+        const property = await Property.findOne({ _id: id })
+
+        if (property) {
+            const hiddenProperty = await Property.findByIdAndUpdate({ _id: id }, { $set: { is_hide: !property.is_hide } })
+
+            return res.status(200).json({ success: true, message: "get data from Propety Database", property, hiddenProperty })
+        } else {
+            return res.status(500).json({ success: false, message: "Error while fetching Data" });
+        }
+    } catch (error) {
+        console.log("get property", error);
     }
 }
 export const GetBookingData = async (req, res) => {
@@ -324,12 +360,12 @@ export const GetBookingData = async (req, res) => {
     try {
         const GetData = await Bookings.find({})
 
-        if(GetData){
-            return res.status(200).json({success: true, message: "get data from Bookings", GetData})
-        }else{
+        if (GetData) {
+            return res.status(200).json({ success: true, message: "get data from Bookings", GetData })
+        } else {
             return res.status(500).json({ success: false, message: "Error while fetching Data" });
         }
     } catch (error) {
-        console.log("GetBooking Data",error);
+        console.log("GetBooking Data", error);
     }
 }

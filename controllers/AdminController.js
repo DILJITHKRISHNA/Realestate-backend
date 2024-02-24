@@ -257,7 +257,7 @@ export const PropertyStatusUpdate = async (req, res) => {
 
         const propertyDetails = await Property.findOne({ _id: id });
         console.log(propertyDetails, "propertydetailssss in status function");
-
+        
         if (propertyDetails) {
             let updateData = {};
 
@@ -272,36 +272,52 @@ export const PropertyStatusUpdate = async (req, res) => {
             const updatedStatus = await Property.updateOne(
                 { _id: id },
                 { $set: updateData }
-            );
+                );
 
-            console.log(propertyDetails, "detaillssss");
-            console.log(updatedStatus, "statusssssssssssssss");
-
-            return res.status(200).json({
+                console.log(propertyDetails, "detaillssss");
+                console.log(updatedStatus, "statusssssssssssssss");
+                
+                return res.status(200).json({
                     success: true,
                     message: "Action successful",
                     updatedStatus,
                     propertyDetails,
                 });
+            } else {
+                return res.json({ success: false, message: "Failed to change status" });
+            }
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ success: false, message: "Internal Server Error" });
+        }
+    };
+    
+    export const getBookingData = async (req, res) => {
+        try {
+            const Bookingdata = await Booking.find({})
+            console.log(Bookingdata,"dataaa");
+            if(Bookingdata){
+                return res.status(200).json({success: true, message: "Data fetched successfully.", data : Bookingdata});  
+            } else {
+                return res.json({success: false, message: " Error while fetching data"})
+            }
+    } catch (error) {
+        console.log("getBooking Data", error);
+    }
+}
+
+export const PropertyDetails = async (req, res) => {
+    console.log("enter to property Details controller");
+    try {
+        const { id } = req.params
+        console.log(id,"000000000");
+        const propertyDetails = await Property.find({_id: id})
+        if (propertyDetails) {
+            return res.status(200).json({ success: true, message: "Successfully got the  details of properties ", data: propertyDetails });
         } else {
-            return res.json({ success: false, message: "Failed to change status" });
+            return res.json({ success: false, message: "Failed to get Details" })
         }
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ success: false, message: "Internal Server Error" });
-    }
-};
-
-export const getBookingData = async (req, res) => {
-    try {
-        const Bookingdata = await Booking.find({})
-        console.log(Bookingdata,"dataaa");
-        if(Bookingdata){
-            return res.status(200).json({success: true, message: "Data fetched successfully.", data : Bookingdata});  
-        } else {
-            return res.json({success: false, message: " Error while fetching data"})
-        }
-    } catch (error) {
-        console.log("getBooking Data", error);
     }
 }

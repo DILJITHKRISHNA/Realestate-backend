@@ -77,6 +77,10 @@ const PropertySchema = new mongoose.Schema({
   is_Booked: {
     type: Boolean,
   },
+  is_hide: {
+    type: Boolean,
+    default: false
+  },
 }, { timestamps: true });
 
 const Property = mongoose.model('Property', PropertySchema);

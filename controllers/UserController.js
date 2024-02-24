@@ -216,7 +216,7 @@ export const GooglAuthLogin = async (req, res) => {
 export const GetProperty = async (req, res) => {
     // console.log(id,"iddddddd");
     try {
-        const property = await Property.find({ is_verified: true })
+        const property = await Property.find({ is_verified: true, is_hide: false })
         if (property) {
             return res.status(200).json({ success: true, message: "Properties Fetched Successfully!", data: property });
         } else {
@@ -293,6 +293,10 @@ export const PaymentSuccess = async (req, res) => {
 
         if (!booking) {
             const property = await Property.findOneAndUpdate(
+                { _id: id },
+                { $set: { is_Booked: true } }
+            )
+            const HideProperty = await Property.findOneAndUpdate(
                 { _id: id },
                 { $set: { is_Booked: true } }
             )
