@@ -321,3 +321,23 @@ export const PropertyDetails = async (req, res) => {
         console.log(error);
     }
 }
+export const EditCategory = async (req, res) => {
+    console.log("enter to Edit Category controller");
+    try {
+        const { id } = req.params
+        const { category } = req.body
+        console.log(category,"in controller");
+        const CategoryDetails = await Category.find({_id: id})
+        if (CategoryDetails) {
+            const updateCategory = await  Category.updateOne(
+                { _id: id },
+                {$set:{category: category}}
+            )
+            return res.status(200).json({ success: true, message: "Category Updated successfully ", updateCategory });
+        } else {
+            return res.json({ success: false, message: "Failed to Update Category" })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}

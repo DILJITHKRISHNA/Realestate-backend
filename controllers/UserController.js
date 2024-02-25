@@ -266,7 +266,6 @@ export const Payment = async (req, res) => {
         const property = await Property.findById({ _id: id })
         console.log(property, "propertyy");
         const RentAmount = property.Rent
-        console.log(RentAmount, "rent amount");
 
         const paymentIntent = await stripe.paymentIntents.create({
             amount: RentAmount * 100,
@@ -275,7 +274,7 @@ export const Payment = async (req, res) => {
                 enabled: true
             },
         })
-        return res.status(200).send({ success: true, message: "client id passed to client", clientSecret: paymentIntent.client_secret })
+        return res.status(200).send({ success: true, message: "client id passed to client", clientSecret: paymentIntent.client_secret, RentAmount })
 
     } catch (error) {
         console.log(error);

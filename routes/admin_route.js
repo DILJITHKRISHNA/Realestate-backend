@@ -12,7 +12,8 @@ import {
     getPropertydetails,
     PropertyStatusUpdate,
     getBookingData,
-    PropertyDetails
+    PropertyDetails,
+    EditCategory
 } from "../controllers/AdminController.js"
 const router = express.Router()
 
@@ -31,6 +32,7 @@ router.get('/propertylist', getPropertydetails)
 router.post('/propertystatus/:id', PropertyStatusUpdate)
 router.get('/bookingsdata', getBookingData)
 router.get('/propertylist/:id', PropertyDetails)
+router.post('/admin/editcategory/:id', EditCategory)
 
 
 
