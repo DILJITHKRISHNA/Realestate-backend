@@ -319,19 +319,38 @@ export const getPropertyData = async (req, res) => {
         console.log("get property", error);
     }
 }
-export const EditPropertyData = async (req, res) => {
+export const EditProperty = async (req, res) => {
     try {
         const { id } = req.params
-        // const { title, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
-        const property = await Property.find({ _id: id })
+        console.log(id, "0000000");
+        const { title, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
+        const property = await Property.findOne({ _id: id })
 
         if (property) {
-            // let updateProperty = await Property.updateMany(
-            //     { _id : id },
-
-            // )
-
-            return res.status(200).json({ success: true, message: "get data from Propety Database", property })
+            let updateProperty = await Property.updateOne(
+                { _id: id },
+                {
+                    $set: {
+                        name: title,
+                        Rent: rent,
+                        type: type,
+                        state: state,
+                        balcony: balconies,
+                        imageUrls: imageUrl,
+                        details: additionalDetails,
+                        bedrooms: bedroom,
+                        bathrooms: bathroom,
+                        parking: parking,
+                        furnished: furnished,
+                        buildUpArea: buildUpArea,
+                        FloorCount: FloorCount,
+                        location: location,
+                        country: country,
+                        city: city
+                    }
+                }
+            )
+            return res.status(200).json({ success: true, message: "Successfully Saved edited data", property, updateProperty })
         } else {
             return res.status(500).json({ success: false, message: "Error while fetching Data" });
         }
