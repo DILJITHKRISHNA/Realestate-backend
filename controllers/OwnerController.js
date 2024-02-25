@@ -250,7 +250,6 @@ export const AddProperty = async (req, res) => {
             return res.json({ success: false, message: "Property with the same title already exists" });
         } else {
 
-
             const newProperty = new Property({
                 name: title,
                 type: type,
@@ -270,7 +269,8 @@ export const AddProperty = async (req, res) => {
                 state: state,
                 ownerRef: id,
                 is_verified: false,
-                is_Booked: false
+                is_Booked: false,
+                is_pending: true
             });
             console.log(newProperty, "new Propertyyy");
 
@@ -381,6 +381,20 @@ export const GetBookingData = async (req, res) => {
 
         if (GetData) {
             return res.status(200).json({ success: true, message: "get data from Bookings", GetData })
+        } else {
+            return res.status(500).json({ success: false, message: "Error while fetching Data" });
+        }
+    } catch (error) {
+        console.log("GetBooking Data", error);
+    }
+}
+export const FetchProperty = async (req, res) => {
+    console.log("enter to FetchProperty dataa");
+    try {
+        const { id } = req.params
+        const GetData = await Property.findOne({_id: id})
+        if (GetData) {
+            return res.status(200).json({ success: true, message: "FetchProperty data from Bookings", GetData })
         } else {
             return res.status(500).json({ success: false, message: "Error while fetching Data" });
         }

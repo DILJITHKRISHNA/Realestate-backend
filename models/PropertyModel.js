@@ -81,6 +81,10 @@ const PropertySchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  is_pending: {
+    type: Boolean,
+    default: true
+  },
 }, { timestamps: true });
 
 const Property = mongoose.model('Property', PropertySchema);

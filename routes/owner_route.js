@@ -2,6 +2,7 @@ import express from 'express'
 import {
     AddProperty,
     EditProperty,
+    FetchProperty,
     GetBookingData,
     GetKycData,
     ImageUpload,
@@ -31,6 +32,7 @@ router.get('/owner/getproperty', getPropertyData)
 router.post('/owner/editproperty/:id', EditProperty)
 router.post('/owner/hideproperty/:id', hideProperty)
 router.get('/owner/FetchBookings', GetBookingData)
+router.get('/owner/getproperty/:id', FetchProperty)
 
 
 export default router
