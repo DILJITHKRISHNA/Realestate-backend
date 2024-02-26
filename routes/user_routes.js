@@ -10,6 +10,7 @@ import {
     PaymentHistory,
     PaymentSuccess,
     registerUser,
+    ResendOtp,
     resetPassword,
     SinglyFetchProperty,
     UserLogin
@@ -32,6 +33,7 @@ router.post('/property/paymentreq/:id', Payment)
 router.post('/property/success/:id', PaymentSuccess)
 router.get('/paymenthistory', PaymentHistory)
 router.post('/paymenthistory/:id', cancelPayment)
+router.post('/resendotp', ResendOtp)
 
 
 export default router

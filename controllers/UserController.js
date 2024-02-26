@@ -9,6 +9,9 @@ import jwt from "jsonwebtoken"
 import cloudinary from "../utils/cloudinary.js";
 import Booking from "../models/BookModel.js";
 import Stripe from 'stripe'
+import mailSender from "../utils/mailSender.js";
+import otpGenerator from 'otp-generator'
+
 
 const securePassword = async (password) => {
     try {
@@ -342,7 +345,7 @@ export const cancelPayment = async (req, res) => {
         console.log(id, 'bookng idd');
         const history = await Booking.find({ _id: id })
         const rentAmount = history.Rent
-        console.log(rentAmount,"77777777777777777-----------");
+        console.log(rentAmount, "77777777777777777-----------");
         if (history) {
             const updateHistory = await Booking.updateOne(
                 { _id: id },
@@ -359,5 +362,42 @@ export const cancelPayment = async (req, res) => {
         }
     } catch (error) {
         console.log('PaymentHistoryy', error);
+    }
+}
+
+export const ResendOtp = async (req, res) => {
+    try {
+        const { email } = req.body
+        console.log(email, "lllllll");
+        const result = await User.findOne({ email: email })
+        console.log(result, "result in backendnd");
+        if (result) {
+
+            let otp = otpGenerator.generate(4, {
+                upperCaseAlphabets: false,
+                lowerCaseAlphabets: false,
+                specialChars: false,
+            });
+
+            let result = await OTP.findOne({ otp: otp });
+            while (result) {
+                otp = otpGenerator.generate(4, {
+                    upperCaseAlphabets: false,
+                });
+                result = await OTP.findOne({ otp: otp });
+            }
+            const otpPayload = { email, otp };
+            const otpBody = await OTP.create(otpPayload);
+            mailSender(
+                email,
+                "Resend OTP",
+                "Your  OTP for registration is : " + otp
+            )
+            return res.json({ success: true, message: 'OTP Re-Sent Successfully', otp })
+        }else{
+            return res.json({success: false, message: "Error while re-sending the Otp"})
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
