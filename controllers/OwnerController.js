@@ -126,7 +126,6 @@ export const ownerVerifyOtp = async (req, res) => {
 
 export const ownerLogin = async (req, res) => {
     const { email, password } = req.body
-    console.log();
     const OwnerExist = await Owner.findOne({ email: email })
     if (OwnerExist) {
         const passwordMatch = await bcrypt.compare(password, OwnerExist.password)

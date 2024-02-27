@@ -16,7 +16,6 @@ export const AdminAuth = async (req, res, next) => {
                 is_Admin: true,
             });
             if (admin) {
-                req.headers.adminId = decoded.id;
                 next();
             } else {
                 return res
