@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken'
 import Kyc from "../models/KycModel.js";
 import Property from "../models/PropertyModel.js";
 import Bookings from '../models/BookModel.js'
+import Category from '../models/CategoryModel.js'
 import cloudinary from "../utils/cloudinary.js";
 
 const securePassword = async (password) => {
@@ -133,7 +134,7 @@ export const ownerLogin = async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ success: false, message: "Invalid Password" })
         } else {
-            let token = jwt.sign({ id: OwnerExist._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
+            let token = jwt.sign({ id: OwnerExist._id }, process.env.JWT_SECRET, { expiresIn: "24h" })
             console.log("token : ", token);
             return res.status(200).send({
                 success: true,
@@ -391,7 +392,7 @@ export const FetchProperty = async (req, res) => {
     console.log("enter to FetchProperty dataa");
     try {
         const { id } = req.params
-        const GetData = await Property.findOne({_id: id})
+        const GetData = await Property.findOne({ _id: id })
         if (GetData) {
             return res.status(200).json({ success: true, message: "FetchProperty data from Bookings", GetData })
         } else {
@@ -399,5 +400,46 @@ export const FetchProperty = async (req, res) => {
         }
     } catch (error) {
         console.log("GetBooking Data", error);
+    }
+}
+export const FetchCategory = async (req, res) => {
+    console.log("enter to FetchCategory dataa");
+    try {
+        const categoryList = await Category.find({})
+        if (categoryList) {
+            return res.status(200).json({ success: true, message: "Category Fetching Successfull", categoryList })
+        } else {
+            return res.status(500).json({ success: false, message: "Error while fetching Data" });
+        }
+    } catch (error) {
+        console.log("categoryList Data", error);
+    }
+}
+
+export const GetPaginateProperty = async (req, res) => {
+    try {
+        const { page = 1, pageSize = 4 } = req.params; 
+
+        const PropertyData = await Property.find({})
+            .skip((page - 1) * pageSize)
+            .limit(parseInt(pageSize))
+            .exec();
+
+        const totalProperties = await Property.countDocuments();
+
+        if (PropertyData) {
+            const totalPages = Math.ceil(totalProperties / parseInt(pageSize));
+            return res.status(200).json({
+                success: true,
+                message: "PropertyData fetched successfully",
+                PropertyData,
+                totalPages,
+            });
+        } else {
+            return res.json({ success: false, message: "Error while fetching data" });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 }

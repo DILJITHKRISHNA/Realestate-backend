@@ -13,7 +13,8 @@ import {
     PropertyStatusUpdate,
     getBookingData,
     PropertyDetails,
-    EditCategory
+    EditCategory,
+    GetPaginateProperty
 } from "../controllers/AdminController.js"
 import { AdminAuth } from '../Middleware/AdminAuth.js'
 
@@ -35,6 +36,7 @@ router.post('/propertystatus/:id', PropertyStatusUpdate)
 router.get('/bookingsdata', AdminAuth, getBookingData)
 router.get('/propertylist/:id', AdminAuth, PropertyDetails)
 router.post('/admin/editcategory/:id', AdminAuth, EditCategory)
+router.get('/properties/:page', GetPaginateProperty);
 
 
 

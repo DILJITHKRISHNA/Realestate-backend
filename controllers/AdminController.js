@@ -23,7 +23,7 @@ export const loginAdmin = async (req, res) => {
                 console.log("invalid password");
                 return res.json({ success: false, message: "invalid password" })
             } else {
-                let token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
+                let token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: "24h" })
                 return res.status(200).json({ success: true, message: "Admin Logged succesfully", token: token, admin: admin })
             }
         }
@@ -339,5 +339,33 @@ export const EditCategory = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const GetPaginateProperty = async (req, res) => {
+    try {
+        const { page = 1, pageSize = 6 } = req.params; 
+
+        const PropertyData = await Property.find({})
+            .skip((page - 1) * pageSize)
+            .limit(parseInt(pageSize))
+            .exec();
+
+        const totalProperties = await Property.countDocuments();
+
+        if (PropertyData) {
+            const totalPages = Math.ceil(totalProperties / parseInt(pageSize));
+            return res.status(200).json({
+                success: true,
+                message: "PropertyData fetched successfully",
+                PropertyData,
+                totalPages,
+            });
+        } else {
+            return res.json({ success: false, message: "Error while fetching data" });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 }

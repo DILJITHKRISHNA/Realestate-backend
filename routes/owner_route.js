@@ -2,9 +2,11 @@ import express from 'express'
 import {
     AddProperty,
     EditProperty,
+    FetchCategory,
     FetchProperty,
     GetBookingData,
     GetKycData,
+    GetPaginateProperty,
     ImageUpload,
     OwnersendOtp,
     RegisterWithGoogle,
@@ -34,6 +36,9 @@ router.post('/owner/editproperty/:id', OwnerAuth, EditProperty)
 router.post('/owner/hideproperty/:id', OwnerAuth, hideProperty)
 router.get('/owner/FetchBookings', OwnerAuth, GetBookingData)
 router.get('/owner/getproperty/:id', OwnerAuth, FetchProperty)
+router.get('/owner/fetchcategory', OwnerAuth, FetchCategory)
+router.get('/properties/:page', GetPaginateProperty);
+
 
 
 export default router

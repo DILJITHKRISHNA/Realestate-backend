@@ -14,21 +14,25 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    imageUrls: {
+        type: Array,
+        required: true
+    },
     is_block: {
         type: Boolean,
-        default:false
+        default: false
     },
     is_Active: {
         type: Boolean,
-        default:false
+        default: false
     },
     is_Admin: {
         type: Boolean,
-        default:false
+        default: false
     },
-    googleId:{
+    googleId: {
         type: String,
-      },
+    },
     is_google: {
         type: Boolean,
         default: false
@@ -37,7 +41,7 @@ const userSchema = new mongoose.Schema({
     //     type: String,
     //     enum: ['Admin', 'User', 'Owner']
     // }
-},{ timestamps: true })
+}, { timestamps: true })
 
 const User = mongoose.model('User', userSchema)
 export default User

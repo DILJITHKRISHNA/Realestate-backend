@@ -26,36 +26,40 @@ export const registerUser = async (req, res) => {
 
     try {
         const { username, password, mobile, email } = req.body
-        console.log(email, "sighhhhh");
-        if (!username || !email || !password || !mobile) {
-            return res.status(403).json({
-                success: false,
-                message: 'All fields are required',
-            });
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const userExist = await User.findOne({ email: email });
-        if (userExist) {
-            return res.json({
-                success: false,
-                message: 'User Already Exists',
-            });
+        if (username === '' && password === '' && mobile === "" && email === "") {
+            return res.json({ success: false, message: "please add the required field" })
         } else {
-            const userData = new User({
-                username: username,
-                mobile: mobile,
-                password: hashedPassword,
-                email: email,
-            })
-            console.log(userData, "iiiiiiiiiiiiiiiiiiiiii");
-            await userData.save()
-            const token = createSecretToken(userData._id);
-            res.cookie("token", token, {
-                httpOnly: false,
-                withCredentials: true
-            })
-            return res.status(201).json({ message: "User signed in successfully", success: true, userData });
+            console.log(email, "sighhhhh");
+            if (!username || !email || !password || !mobile) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'All fields are required',
+                });
+            }
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const userExist = await User.findOne({ email: email });
+            if (userExist) {
+                return res.json({
+                    success: false,
+                    message: 'User Already Exists',
+                });
+            } else {
+                const userData = new User({
+                    username: username,
+                    mobile: mobile,
+                    password: hashedPassword,
+                    email: email,
+                })
+                console.log(userData, "iiiiiiiiiiiiiiiiiiiiii");
+                await userData.save()
+                const token = createSecretToken(userData._id);
+                res.cookie("token", token, {
+                    httpOnly: false,
+                    withCredentials: true
+                })
+                return res.status(201).json({ message: "User signed in successfully", success: true, userData });
+            }
         }
     } catch (error) {
         console.log(error);
@@ -85,7 +89,7 @@ export const UserLogin = async (req, res) => {
                     message: 'Invalid Password',
                 });
             } else {
-                let token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+                let token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
                 return res.status(200).json({
                     success: true,
                     token: token,
@@ -198,7 +202,7 @@ export const GooglAuthLogin = async (req, res) => {
         if (user) {
             const PassMatch = await bcrypt.compare(email, user.email)
             if (PassMatch) {
-                let token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
+                let token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" })
                 console.log(token, "token ssjsjsjsjsjsj");
                 return res.status(200).json({
                     success: true,
@@ -294,33 +298,36 @@ export const PaymentSuccess = async (req, res) => {
         console.log(id, data, "iddd backend");
         const rent = await Property.findById({ _id: id })
         const booking = await Booking.findOne({ email: data.email })
-
-        if (!booking) {
-            const property = await Property.findOneAndUpdate(
-                { _id: id },
-                { $set: { is_Booked: true } }
-            )
-            const HideProperty = await Property.findOneAndUpdate(
-                { _id: id },
-                { $set: { is_Booked: true } }
-            )
-
-            const NewBooking = new Booking({
-                username: data.name,
-                mobile: data.contact,
-                property_id: id,
-                Rent: rent.Rent,
-                email: data.email,
-                bookingStatus: "Success",
-                relocationDate: data.relocationDate,
-                is_canceled: false
-            })
-            const newBookedData = NewBooking.save()
-
-            return res.status(200).json({ success: true, message: "Property booked Successfull", property });
+        if (data.name === "" && data.contact === "" && rent.Rent === "" && data.email === '' && data.relocationDate === "") {
+            return res.json({ success: false, message: "please add the required datas" })
         } else {
-            return res.json({ success: false, message: "Property is already Booked" })
 
+            if (!booking) {
+                const property = await Property.findOneAndUpdate(
+                    { _id: id },
+                    { $set: { is_Booked: true } }
+                )
+                const hideProperty = await Property.findOneAndUpdate(
+                    { _id: id },
+                    { $set: { is_hide: true } }
+                )
+                const NewBooking = new Booking({
+                    username: data.name,
+                    mobile: data.contact,
+                    property_id: id,
+                    Rent: rent.Rent,
+                    email: data.email,
+                    bookingStatus: "Success",
+                    relocationDate: data.relocationDate,
+                    is_canceled: false
+                })
+                NewBooking.save()
+
+                return res.status(200).json({ success: true, message: "Property booked Successfull", property });
+            } else {
+                return res.json({ success: false, message: "Property is already Booked" })
+
+            }
         }
     } catch (error) {
         console.log(error);
@@ -396,10 +403,51 @@ export const ResendOtp = async (req, res) => {
                 "Your  OTP for registration is : " + otp
             )
             return res.json({ success: true, message: 'OTP Re-Sent Successfully', otp })
-        }else{
-            return res.json({success: false, message: "Error while re-sending the Otp"})
+        } else {
+            return res.json({ success: false, message: "Error while re-sending the Otp" })
         }
     } catch (error) {
         console.log(error);
     }
 }
+
+export const GetProfileData = async (req, res) => {
+    try {
+        const { email } = req.body
+        const userData = await User.findOne({})
+        if (userData) {
+            return res.status(200).json({ success: true, message: "Profile data fetched successfully", userData })
+        } else {
+            return res.json({ success: false, message: "Error while fetching data" })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const GetPaginateProperty = async (req, res) => {
+    try {
+        const { page = 1, pageSize = 6 } = req.params; 
+
+        const PropertyData = await Property.find({})
+            .skip((page - 1) * pageSize)
+            .limit(parseInt(pageSize))
+            .exec();
+
+        const totalProperties = await Property.countDocuments();
+
+        if (PropertyData) {
+            const totalPages = Math.ceil(totalProperties / parseInt(pageSize));
+            return res.status(200).json({
+                success: true,
+                message: "PropertyData fetched successfully",
+                PropertyData,
+                totalPages,
+            });
+        } else {
+            return res.json({ success: false, message: "Error while fetching data" });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};

@@ -5,34 +5,42 @@ dotenv.config();
 
 
 export const OwnerAuth = async (req, res, next) => {
-    try {
-      if (req.headers.authorization) {
-        console.log(req.headers.authorization,"77777777777");
-        let token = req.headers.authorization;
-        console.log(token,"owner tokkeennenen");
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decoded,"decodededed");
-        const owner = await Owner.findOne({
-          _id: decoded.id,
-        });
-        if (owner) {
-          if (owner.is_block === false) {
-            req.headers.ownerId = decoded.id;
-            next();
+  try {
+    if (req.headers.authorization) {
+      console.log(req.headers.authorization, "77777777777");
+      let token = req.headers.authorization;
+      console.log(token, "owner tokkeennenen");
+      const decoded = jwt.verify(token, process.env.JWT_SECRET,
+        async (err, decoded) => {
+          if (err) {
+            return res.status(401).send({ msg: 'Unauthorized: Token is invalid' });
           } else {
-            return res
-              .status(403)
-              .json({ data: { message: "You are blocked by admin " } });
+
+            console.log(decoded, "decodededed");
+            const owner = await Owner.findOne({
+              _id: decoded.id,
+            });
+            if (owner) {
+              if (owner.is_block === false) {
+                req.headers.ownerId = decoded.id;
+                next();
+              } else {
+                return res
+                  .status(403)
+                  .json({ data: { message: "You are blocked by admin " } });
+              }
+            } else {
+              return res
+                .status(400)
+                .json({ message: "Owner not authorised or inavid user" });
+            }
           }
-        } else {
-          return res
-            .status(400)
-            .json({ message: "user not authorised or inavid user" });
         }
-      } else {
-        return res.status(400).json({ message: "user not authorised" });
-      }
-    } catch (error) {
-      console.log(error.message);
+      );
+    } else {
+      return res.status(400).json({ message: "Owner not authorised" });
     }
-  };
+  } catch (error) {
+    console.log(error.message);
+  }
+};

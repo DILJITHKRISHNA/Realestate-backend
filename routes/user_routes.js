@@ -3,6 +3,8 @@ import {
     cancelPayment,
     CheckIsBooked,
     forgotPass,
+    GetPaginateProperty,
+    GetProfileData,
     GetProperty,
     GooglAuthLogin,
     GooglAuthRegister,
@@ -35,6 +37,8 @@ router.post('/property/success/:id', UserAuth, PaymentSuccess)
 router.get('/paymenthistory', UserAuth, PaymentHistory)
 router.post('/paymenthistory/:id', UserAuth, cancelPayment)
 router.post('/resendotp', ResendOtp)
+router.get('/getprofiledata', GetProfileData)
+router.get('/properties/:page', GetPaginateProperty);
 
 
 export default router
