@@ -68,8 +68,6 @@ export const ListCategory = async (req, res) => {
 
         const categoryTypeExist = await Category.findOne({ category: { $regex: new RegExp(category, 'i') } });
 
-
-
         console.log(categoryTypeExist, "existttttttttttt");
 
         if (categoryTypeExist) {
@@ -253,11 +251,11 @@ export const PropertyStatusUpdate = async (req, res) => {
     console.log("enter to PropertyStatusUpdate controller");
     try {
         const { id } = req.params;
-        const { action } = req.body; 
+        const { action } = req.body;
 
         const propertyDetails = await Property.findOne({ _id: id });
         console.log(propertyDetails, "propertydetailssss in status function");
-        
+
         if (propertyDetails) {
             let updateData = {};
 
@@ -272,35 +270,35 @@ export const PropertyStatusUpdate = async (req, res) => {
             const updatedStatus = await Property.updateOne(
                 { _id: id },
                 { $set: updateData }
-                );
+            );
 
-                console.log(propertyDetails, "detaillssss");
-                console.log(updatedStatus, "statusssssssssssssss");
-                
-                return res.status(200).json({
-                    success: true,
-                    message: "Action successful",
-                    updatedStatus,
-                    propertyDetails,
-                });
-            } else {
-                return res.json({ success: false, message: "Failed to change status" });
-            }
-        } catch (error) {
-            console.log(error);
-            return res.status(500).json({ success: false, message: "Internal Server Error" });
+            console.log(propertyDetails, "detaillssss");
+            console.log(updatedStatus, "statusssssssssssssss");
+
+            return res.status(200).json({
+                success: true,
+                message: "Action successful",
+                updatedStatus,
+                propertyDetails,
+            });
+        } else {
+            return res.json({ success: false, message: "Failed to change status" });
         }
-    };
-    
-    export const getBookingData = async (req, res) => {
-        try {
-            const Bookingdata = await Booking.find({})
-            console.log(Bookingdata,"dataaa");
-            if(Bookingdata){
-                return res.status(200).json({success: true, message: "Data fetched successfully.", data : Bookingdata});  
-            } else {
-                return res.json({success: false, message: " Error while fetching data"})
-            }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+export const getBookingData = async (req, res) => {
+    try {
+        const Bookingdata = await Booking.find({})
+        console.log(Bookingdata, "dataaa");
+        if (Bookingdata) {
+            return res.status(200).json({ success: true, message: "Data fetched successfully.", data: Bookingdata });
+        } else {
+            return res.json({ success: false, message: " Error while fetching data" })
+        }
     } catch (error) {
         console.log("getBooking Data", error);
     }
@@ -310,8 +308,8 @@ export const PropertyDetails = async (req, res) => {
     console.log("enter to property Details controller");
     try {
         const { id } = req.params
-        console.log(id,"000000000");
-        const propertyDetails = await Property.find({_id: id})
+        console.log(id, "000000000");
+        const propertyDetails = await Property.find({ _id: id })
         if (propertyDetails) {
             return res.status(200).json({ success: true, message: "Successfully got the  details of properties ", data: propertyDetails });
         } else {
@@ -326,17 +324,18 @@ export const EditCategory = async (req, res) => {
     try {
         const { id } = req.params
         const { category } = req.body
-        console.log(category,"in controller");
-        const CategoryDetails = await Category.find({_id: id})
-        if (CategoryDetails) {
-            const updateCategory = await  Category.updateOne(
+        const CategoryDetails = await Category.findOne({ _id: id })
+        const isExist = await Category.findOne({  category: { $regex: new RegExp(category, 'i') } })
+        if (CategoryDetails && !isExist) {
+            const updateCategory = await Category.updateOne(
                 { _id: id },
-                {$set:{category: category}}
+                { $set: { category: category } }
             )
             return res.status(200).json({ success: true, message: "Category Updated successfully ", updateCategory });
         } else {
-            return res.json({ success: false, message: "Failed to Update Category" })
+            return res.json({ success: false, message: "Category with same name already exists!", isExist })
         }
+
     } catch (error) {
         console.log(error);
     }
@@ -344,7 +343,7 @@ export const EditCategory = async (req, res) => {
 
 export const GetPaginateProperty = async (req, res) => {
     try {
-        const { page = 1, pageSize = 6 } = req.params; 
+        const { page = 1, pageSize = 6 } = req.params;
 
         const PropertyData = await Property.find({})
             .skip((page - 1) * pageSize)

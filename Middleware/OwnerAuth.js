@@ -7,9 +7,7 @@ dotenv.config();
 export const OwnerAuth = async (req, res, next) => {
   try {
     if (req.headers.authorization) {
-      console.log(req.headers.authorization, "77777777777");
       let token = req.headers.authorization;
-      console.log(token, "owner tokkeennenen");
       const decoded = jwt.verify(token, process.env.JWT_SECRET,
         async (err, decoded) => {
           if (err) {

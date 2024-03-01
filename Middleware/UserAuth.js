@@ -8,10 +8,8 @@ export const UserAuth = async (req, res, next) => {
     try {
         if (req.headers.authorization) {
             let token = req.headers.authorization;
-            console.log(req.headers.authorization,"token");
             const decoded = jwt.verify(token, process.env.JWT_SECRET,
                 async (err, decoded) => {
-                    console.log(decoded,"decodddee user")
                     if (err) {
                         return res.status(401).json({ message: "Token expired please login" });
                     } else {

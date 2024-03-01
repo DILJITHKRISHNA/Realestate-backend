@@ -37,7 +37,9 @@ const PropertySchema = new mongoose.Schema({
   },
   imageUrls: {
     type: Array,
-    required: true
+  },
+  videoUrls: {
+    type: Array,
   },
   buildUpArea: {
     type: String,

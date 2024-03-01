@@ -14,7 +14,6 @@ import {
     registerUser,
     ResendOtp,
     resetPassword,
-    SinglyFetchProperty,
     UserLogin
 } from '../controllers/UserController.js';
 import { sendOTP, verifyOtp } from '../controllers/OtpController.js';
@@ -30,7 +29,6 @@ router.post('/resetpassword', resetPassword)
 router.post('/userRegisterWithGoogle', GooglAuthRegister)
 router.post('/userLoginWithGoogle', GooglAuthLogin)
 router.get('/property', UserAuth, GetProperty)
-router.get('/property/:id', UserAuth, SinglyFetchProperty)
 router.post('/property/bookproperty/:id', UserAuth, CheckIsBooked)
 router.post('/property/paymentreq/:id', UserAuth, Payment)
 router.post('/property/success/:id', UserAuth, PaymentSuccess)

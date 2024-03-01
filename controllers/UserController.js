@@ -235,20 +235,7 @@ export const GetProperty = async (req, res) => {
         console.log(error);
     }
 }
-export const SinglyFetchProperty = async (req, res) => {
-    console.log("fififi");
-    try {
-        console.log(id, "iddddddd");
-        const property = await Property.findOne({ _id: id })
-        if (property) {
-            return res.status(200).json({ success: true, message: "Properties Fetched Successfully!", data: property });
-        } else {
-            return res.json({ success: false, message: "Failed to fetch property" })
-        }
-    } catch (error) {
-        console.log(error);
-    }
-}
+
 export const CheckIsBooked = async (req, res) => {
     console.log("CheckIsBooked");
     try {
