@@ -1,11 +1,14 @@
 import express from 'express'
 import {
+    AddProfileImage,
+    AddToWishlist,
     cancelPayment,
     CheckIsBooked,
     forgotPass,
     GetPaginateProperty,
     GetProfileData,
     GetProperty,
+    getWishlistData,
     GooglAuthLogin,
     GooglAuthRegister,
     Payment,
@@ -35,8 +38,11 @@ router.post('/property/success/:id', UserAuth, PaymentSuccess)
 router.get('/paymenthistory', UserAuth, PaymentHistory)
 router.post('/paymenthistory/:id', UserAuth, cancelPayment)
 router.post('/resendotp', ResendOtp)
-router.get('/getprofiledata', GetProfileData)
+router.get('/getprofiledata/:id', GetProfileData)
 router.get('/properties/:page', GetPaginateProperty);
+router.post('/wishlist', AddToWishlist);
+router.get('/wishlist/:id', getWishlistData);
+router.post('/profileimage/:id', AddProfileImage);
 
 
 export default router

@@ -6,11 +6,11 @@ import Property from '../models/PropertyModel.js'
 import bcrypt from "bcrypt"
 import createSecretToken from '../utils/secretToken.js'
 import jwt from "jsonwebtoken"
-import cloudinary from "../utils/cloudinary.js";
 import Booking from "../models/BookModel.js";
 import Stripe from 'stripe'
 import mailSender from "../utils/mailSender.js";
 import otpGenerator from 'otp-generator'
+import Wishlist from "../models/WishlistModel.js";
 
 
 const securePassword = async (password) => {
@@ -48,6 +48,7 @@ export const registerUser = async (req, res) => {
                 const userData = new User({
                     username: username,
                     mobile: mobile,
+                    imageUrls: null,
                     password: hashedPassword,
                     email: email,
                 })
@@ -131,13 +132,7 @@ export const resetPassword = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         } else {
             const hashedPassword = await securePassword(password);
-
-
-
             const updatedUser = await User.updateOne({ email: email }, { $set: { password: hashedPassword } });
-
-
-
             return res.status(200).json({ updatedUser, success: true, message: "Password updated successfully" });
         }
 
@@ -400,8 +395,9 @@ export const ResendOtp = async (req, res) => {
 
 export const GetProfileData = async (req, res) => {
     try {
-        const { email } = req.body
-        const userData = await User.findOne({})
+        const { id } = req.params
+        console.log(id, "idd backend");
+        const userData = await User.findOne({ _id: id })
         if (userData) {
             return res.status(200).json({ success: true, message: "Profile data fetched successfully", userData })
         } else {
@@ -413,7 +409,7 @@ export const GetProfileData = async (req, res) => {
 }
 export const GetPaginateProperty = async (req, res) => {
     try {
-        const { page = 1, pageSize = 6 } = req.params; 
+        const { page = 1, pageSize = 6 } = req.params;
 
         const PropertyData = await Property.find({})
             .skip((page - 1) * pageSize)
@@ -438,3 +434,53 @@ export const GetPaginateProperty = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
+
+export const AddToWishlist = async (req, res) => {
+    try {
+        const { name, imageUrls, type, rent, ownerId } = req.body
+        console.log(type, name, rent, "dataa");
+        const addData = await Wishlist.findOne({ name: name })
+        if (addData) {
+            return res.status(200).json({ success: false, message: "error while saving data" })
+        } else {
+            const NewSavedData = new Wishlist({
+                name: name,
+                Rent: rent,
+                type: type,
+                ownerRef: ownerId,
+                imageUrls: imageUrls,
+            })
+            NewSavedData.save()
+            return res.status(200).json({ success: true, message: "Property saved to wishlist", NewSavedData })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const getWishlistData = async (req, res) => {
+    try {
+        const { id } = req.params
+        const getData = await Wishlist.find({})
+        if (getData) {
+            return res.status(200).json({ success: true, message: "Property Fetched from wishlist", getData })
+        } else {
+            return res.json({ success: false, message: "error while fetching data" })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const AddProfileImage = async (req, res) => {
+    console.log("guu");
+    try {
+        const { id } = req.params
+        const imageUrl = req.body
+        const AddProfileImage = await User.findByIdAndUpdate(
+            { _id: id },
+            { $set: { imageUrls: imageUrl } }
+        )
+        return res.status(200).json({ success: true, message: "Profile Image added", AddProfileImage })
+    } catch (error) {
+        console.log(error);
+    }
+}

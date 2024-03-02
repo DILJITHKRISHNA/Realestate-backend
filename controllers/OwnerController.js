@@ -277,7 +277,8 @@ export const AddProperty = async (req, res) => {
                 ownerRef: id,
                 is_verified: false,
                 is_Booked: false,
-                is_pending: true
+                is_pending: true,
+                is_saved: false,
             });
             console.log(newProperty, "new Propertyyy");
 
@@ -375,7 +376,6 @@ export const hideProperty = async (req, res) => {
     }
 }
 export const GetBookingData = async (req, res) => {
-    console.log("enter to getbooking dataa");
     try {
         const GetData = await Bookings.find({})
 
@@ -389,7 +389,6 @@ export const GetBookingData = async (req, res) => {
     }
 }
 export const FetchProperty = async (req, res) => {
-    console.log("enter to FetchProperty dataa");
     try {
         const { id } = req.params
         const GetData = await Property.findOne({ _id: id })
@@ -403,7 +402,6 @@ export const FetchProperty = async (req, res) => {
     }
 }
 export const FetchCategory = async (req, res) => {
-    console.log("enter to FetchCategory dataa");
     try {
         const categoryList = await Category.find({})
         if (categoryList) {
@@ -419,7 +417,6 @@ export const FetchCategory = async (req, res) => {
 export const GetPaginateProperty = async (req, res) => {
     try {
         const { page = 1, pageSize = 4 } = req.params;
-        console.log("idd in backend of ownerrr");
         const PropertyData = await Property.find({})
             .skip((page - 1) * pageSize)
             .limit(parseInt(pageSize))
@@ -445,7 +442,6 @@ export const GetPaginateProperty = async (req, res) => {
 }
 
 export const getOwnerData = async(req, res) => {
-    console.log("fggggg");
     try {
         const { id } = req.params
         const OwnerData = await Owner.findOne({_id: id})

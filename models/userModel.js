@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema({
     },
     imageUrls: {
         type: Array,
-        required: true
     },
     is_block: {
         type: Boolean,
