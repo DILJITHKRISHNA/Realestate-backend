@@ -10,6 +10,7 @@ import {
     ImageUpload,
     OwnersendOtp,
     RegisterWithGoogle,
+    getOwnerData,
     getPropertyData,
     handleKycData,
     hideProperty,
@@ -38,6 +39,7 @@ router.get('/owner/FetchBookings', OwnerAuth, GetBookingData)
 router.get('/owner/getproperty/:id', OwnerAuth, FetchProperty)
 router.get('/owner/fetchcategory', OwnerAuth, FetchCategory)
 router.get('/properties/:page', GetPaginateProperty);
+router.get('/owner/profile/:id', getOwnerData);
 
 
 

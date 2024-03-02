@@ -147,10 +147,16 @@ export const ownerLogin = async (req, res) => {
 }
 
 export const handleKycData = async (req, res) => {
-    //validatoins
     try {
         const { username, email, address, state, zipCode, occupation, city, country, panCard } = req.body
-        console.log(req.body, "dataaa");
+
+        if (!username || !email || !address || !state || !zipCode || !occupation || !city || !country || !panCard) {
+            return res.status(400).json({ success: false, message: "Please provide all required fields." });
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ success: false, message: "Invalid email format." });
+        }
         const OwnerData = await Kyc.findOne({ email: email })
         if (OwnerData) {
             console.log("ownerData already exist");
@@ -181,7 +187,6 @@ export const RegisterWithGoogle = async (req, res) => {
     console.log('enter to backend controller');
     try {
         const { id, email, name, mobile } = req.body
-        console.log(email);
         const hash = await securePassword(id)
         const owner = await Owner.findOne({ email: email });
         if (!owner) {
@@ -244,7 +249,7 @@ export const AddProperty = async (req, res) => {
     try {
         const { id } = req.params
         console.log(req.body, "bodddddddmasssssss");
-        const { title,videoUrl, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
+        const { title, videoUrl, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
         console.log(videoUrl, "videoooo lrri");
         const propertyExist = await Property.findOne({ name: title });
         if (propertyExist) {
@@ -287,19 +292,13 @@ export const AddProperty = async (req, res) => {
 };
 
 export const ImageUpload = async (req, res) => {
-    console.log("0000000000000000000");
+    console.log("ImageUpload");
     try {
         const fileStr = req.body.data
-
         const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
             upload_preset: 'dev_setups'
         })
-
         const id = uploadedResponse && uploadedResponse.public_id;
-        console.log(id, "9999999999999999");
-
-
-
         console.log(uploadedResponse, "uploadresponse");
         return res.json({ success: true, message: 'image Uploaded Successfully', uploadedResponse })
 
@@ -324,7 +323,6 @@ export const getPropertyData = async (req, res) => {
 export const EditProperty = async (req, res) => {
     try {
         const { id } = req.params
-        console.log(id, "0000000");
         const { title, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
         const property = await Property.findOne({ _id: id })
 
@@ -420,8 +418,8 @@ export const FetchCategory = async (req, res) => {
 
 export const GetPaginateProperty = async (req, res) => {
     try {
-        const { page = 1, pageSize = 4 } = req.params; 
-
+        const { page = 1, pageSize = 4 } = req.params;
+        console.log("idd in backend of ownerrr");
         const PropertyData = await Property.find({})
             .skip((page - 1) * pageSize)
             .limit(parseInt(pageSize))
@@ -443,5 +441,20 @@ export const GetPaginateProperty = async (req, res) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export const getOwnerData = async(req, res) => {
+    console.log("fggggg");
+    try {
+        const { id } = req.params
+        const OwnerData = await Owner.findOne({_id: id})
+        if(OwnerData){
+           return res.status(200).json({success: true, message: "Successfully fetched ownerData", OwnerData})
+        }else{
+          return res.json({success: false, message: "error while fetching data"})
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
