@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     imageUrls: {
         type: Array,
     },
+    wallet: {
+        type: Number,
+        default: 0, 
+    },
     is_block: {
         type: Boolean,
         default: false

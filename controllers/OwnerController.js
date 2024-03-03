@@ -454,3 +454,22 @@ export const getOwnerData = async(req, res) => {
         console.log(error);
     }
 }
+export const Addprofileimage = async(req, res) => {
+    try {
+        const { id } = req.params
+        console.log(id,"idd");
+        const imageUrl = req.body
+        console.log(imageUrl,"image urllll");
+        const OwnerData = await Owner.findOne({_id: id})
+        if(OwnerData){
+
+            const addImage = await Owner.updateOne({ _id: id }, { $set:{ imageUrls : imageUrl } })
+
+           return res.status(200).json({success: true, message: "Successfully Updated Profile Image", OwnerData})
+        }else{
+          return res.json({success: false, message: "error while Updating Image"})
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}

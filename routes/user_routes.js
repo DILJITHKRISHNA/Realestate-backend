@@ -4,6 +4,7 @@ import {
     AddToWishlist,
     cancelPayment,
     CheckIsBooked,
+    EditProfileData,
     forgotPass,
     GetPaginateProperty,
     GetProfileData,
@@ -43,6 +44,7 @@ router.get('/properties/:page', GetPaginateProperty);
 router.post('/wishlist', AddToWishlist);
 router.get('/wishlist/:id', getWishlistData);
 router.post('/profileimage/:id', AddProfileImage);
+router.post('/editprofile/:id', EditProfileData);
 
 
 export default router

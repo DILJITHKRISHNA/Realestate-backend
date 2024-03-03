@@ -12,7 +12,7 @@ const ownerSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        require:true,
+        require: true,
     },
     mobile: {
         type: Number,
@@ -21,6 +21,9 @@ const ownerSchema = new mongoose.Schema({
     is_block: {
         type: Boolean,
         default: false
+    },
+    imageUrls: {
+        type: Array,
     },
     is_Active: {
         type: Boolean,

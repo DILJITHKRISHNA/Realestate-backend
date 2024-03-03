@@ -14,7 +14,6 @@ export const OwnerAuth = async (req, res, next) => {
             return res.status(401).send({ msg: 'Unauthorized: Token is invalid' });
           } else {
 
-            console.log(decoded, "decodededed");
             const owner = await Owner.findOne({
               _id: decoded.id,
             });

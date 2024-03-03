@@ -1,6 +1,7 @@
 import express from 'express'
 import {
     AddProperty,
+    Addprofileimage,
     EditProperty,
     FetchCategory,
     FetchProperty,
@@ -40,6 +41,7 @@ router.get('/owner/getproperty/:id', OwnerAuth, FetchProperty)
 router.get('/owner/fetchcategory', OwnerAuth, FetchCategory)
 router.get('/properties/:page', GetPaginateProperty);
 router.get('/owner/profile/:id', getOwnerData);
+router.post('/profileimage/:id', Addprofileimage);
 
 
 

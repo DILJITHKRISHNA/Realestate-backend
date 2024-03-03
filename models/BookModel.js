@@ -20,6 +20,9 @@ const bookSchema = new mongoose.Schema({
     property_id: {
         type: String,
     },
+    user_id: {
+        type: String,
+    },
     email: {
         type: String,
     },

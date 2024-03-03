@@ -275,7 +275,7 @@ export const Payment = async (req, res) => {
 export const PaymentSuccess = async (req, res) => {
     console.log("enter to payment success");
     try {
-        const { data } = req.body
+        const { data, userId } = req.body
         const { id } = req.params
         console.log(id, data, "iddd backend");
         const rent = await Property.findById({ _id: id })
@@ -297,6 +297,7 @@ export const PaymentSuccess = async (req, res) => {
                     username: data.name,
                     mobile: data.contact,
                     property_id: id,
+                    user_id: userId,
                     Rent: rent.Rent,
                     email: data.email,
                     bookingStatus: "Success",
@@ -331,12 +332,9 @@ export const PaymentHistory = async (req, res) => {
 export const cancelPayment = async (req, res) => {
     try {
         const { propId } = req.body
-        console.log(propId, "porpertyyy iddd");
         const { id } = req.params
-        console.log(id, 'bookng idd');
-        const history = await Booking.find({ _id: id })
+        const history = await Booking.findOne({ _id: id })
         const rentAmount = history.Rent
-        console.log(rentAmount, "77777777777777777-----------");
         if (history) {
             const updateHistory = await Booking.updateOne(
                 { _id: id },
@@ -347,12 +345,18 @@ export const cancelPayment = async (req, res) => {
                 { $set: { is_Booked: false } }
             )
 
-            return res.status(200).json({ success: true, message: "Booking Canceled", updateHistory, updateProperty })
+            const user = await User.findById(history.user_id);
+            if (user) {
+                user.wallet += rentAmount;
+                await user.save();
+            }
+
+            return res.status(200).json({ success: true, message: "Booking Canceled", updateHistory, updateProperty, history })
         } else {
             return res.json({ success: false, message: "error while fetching payment history" })
         }
     } catch (error) {
-        console.log('PaymentHistoryy', error);
+        console.log('PaymentHistoryy', error.message);
     }
 }
 
@@ -396,7 +400,6 @@ export const ResendOtp = async (req, res) => {
 export const GetProfileData = async (req, res) => {
     try {
         const { id } = req.params
-        console.log(id, "idd backend");
         const userData = await User.findOne({ _id: id })
         if (userData) {
             return res.status(200).json({ success: true, message: "Profile data fetched successfully", userData })
@@ -438,7 +441,6 @@ export const GetPaginateProperty = async (req, res) => {
 export const AddToWishlist = async (req, res) => {
     try {
         const { name, imageUrls, type, rent, ownerId } = req.body
-        console.log(type, name, rent, "dataa");
         const addData = await Wishlist.findOne({ name: name })
         if (addData) {
             return res.status(200).json({ success: false, message: "error while saving data" })
@@ -471,7 +473,6 @@ export const getWishlistData = async (req, res) => {
     }
 }
 export const AddProfileImage = async (req, res) => {
-    console.log("guu");
     try {
         const { id } = req.params
         const imageUrl = req.body
@@ -480,6 +481,26 @@ export const AddProfileImage = async (req, res) => {
             { $set: { imageUrls: imageUrl } }
         )
         return res.status(200).json({ success: true, message: "Profile Image added", AddProfileImage })
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const EditProfileData = async (req, res) => {
+    try {
+        const { id } = req.params
+        const formData = req.body
+        console.log(formData, "formdaaataa backend");
+        const editProfile = await User.findByIdAndUpdate(
+            { _id: id },
+            {
+                $set: {
+                    username: formData.name,
+                    email: formData.email,
+                    mobile: formData.mobile
+                }
+            }
+        )
+        return res.status(200).json({ success: true, message: "Profile Data Updated", editProfile })
     } catch (error) {
         console.log(error);
     }
