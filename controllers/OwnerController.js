@@ -171,6 +171,7 @@ export const handleKycData = async (req, res) => {
                 country: country,
                 occupation: occupation,
                 panCard: panCard,
+                is_pending: true
 
             })
             await OwnerKyc.save().then(() => console.log("Kyc Added successfully"))

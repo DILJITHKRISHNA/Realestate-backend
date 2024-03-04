@@ -280,8 +280,14 @@ export const PaymentSuccess = async (req, res) => {
         console.log(id, data, "iddd backend");
         const rent = await Property.findById({ _id: id })
         const booking = await Booking.findOne({ email: data.email })
-        if (data.name === "" && data.contact === "" && rent.Rent === "" && data.email === '' && data.relocationDate === "") {
-            return res.json({ success: false, message: "please add the required datas" })
+        if (
+            data.name.trim() === "" ||
+            data.contact.trim() === "" ||
+            rent.Rent.trim() === "" ||
+            data.email.trim() === '' ||
+            data.re_location.trim() === ""
+        ) {
+            return res.json({ success: false, message: "Please add the required data" });
         } else {
 
             if (!booking) {

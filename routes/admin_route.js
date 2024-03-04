@@ -7,14 +7,15 @@ import {
     getCategoryDetails,
     UserblockHandle,
     OwnerblockHandle,
-    ListKyc, OwnerApproval,
+    ListKyc, 
     handleBlockCategory,
     getPropertydetails,
     PropertyStatusUpdate,
     getBookingData,
     PropertyDetails,
     EditCategory,
-    GetPaginateProperty
+    GetPaginateProperty,
+    KycApproval
 } from "../controllers/AdminController.js"
 import { AdminAuth } from '../Middleware/AdminAuth.js'
 
@@ -29,7 +30,7 @@ router.get('/category', AdminAuth, getCategoryDetails)
 router.post('/admin/userlist/:id', UserblockHandle)
 router.post('/admin/ownerlist/:id', OwnerblockHandle)
 router.get('/kyclist', AdminAuth, ListKyc)
-router.get('/approveKyc/:id', OwnerApproval)
+router.get('/approveKyc/:id', KycApproval)
 router.post('/admin/category/:id', handleBlockCategory)
 router.get('/propertylist', AdminAuth, getPropertydetails)
 router.post('/propertystatus/:id', PropertyStatusUpdate)

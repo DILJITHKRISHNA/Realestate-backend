@@ -103,14 +103,14 @@ export const ListKyc = async (req, res) => {
     }
 }
 
-export const OwnerApproval = async (req, res) => {
+export const KycApproval = async (req, res) => {
     try {
         const id = req.params.id
         const ownerExist = await Kyc.findOne({ _id: id })
         if (ownerExist) {
             const approved = await Kyc.updateOne(
                 { _id: id },
-                { $set: { is_approve: !ownerExist.is_approve } })
+                { $set: { is_approve: !ownerExist.is_approve, is_pending: false } })
 
             if (approved) {
                 const OwnerUpdate = await Owner.findOne({ email: ownerExist.email })

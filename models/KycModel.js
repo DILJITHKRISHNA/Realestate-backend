@@ -37,6 +37,10 @@ const kycSchema = new mongoose.Schema({
     is_approve: {
         type: Boolean,
         default: false
+    },
+    is_pending: {
+        type: Boolean,
+        default: true
     }
 })
 
