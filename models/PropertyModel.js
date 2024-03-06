@@ -69,7 +69,7 @@ const PropertySchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  balcony:{
+  balcony: {
     type: Number,
     required: true
   },

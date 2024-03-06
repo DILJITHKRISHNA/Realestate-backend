@@ -21,11 +21,11 @@ const kycSchema = new mongoose.Schema({
     address: {
         type: String
     },
-    city:{
-        type :String,
+    city: {
+        type: String,
     },
     country: {
-        type:String,
+        type: String,
     },
     zipCode: {
         type: Number,
