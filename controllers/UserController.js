@@ -11,6 +11,7 @@ import Stripe from 'stripe'
 import mailSender from "../utils/mailSender.js";
 import otpGenerator from 'otp-generator'
 import Wishlist from "../models/WishlistModel.js";
+import Reserve from "../models/ReserveModal.js";
 
 
 const securePassword = async (password) => {
@@ -420,7 +421,7 @@ export const GetPaginateProperty = async (req, res) => {
     try {
         const { page = 1, pageSize = 6 } = req.params;
 
-        const PropertyData = await Property.find({})
+        const PropertyData = await Property.find({is_hide: false})
             .skip((page - 1) * pageSize)
             .limit(parseInt(pageSize))
             .exec();
@@ -507,6 +508,45 @@ export const EditProfileData = async (req, res) => {
             }
         )
         return res.status(200).json({ success: true, message: "Profile Data Updated", editProfile })
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const ReserveProperty = async (req, res) => {
+    try {
+        const { propertyId } = req.params
+        const { reserveData, userId, ownerId } = req.body
+        console.log(userId, ownerId, " user and owner iddss");
+        console.log(reserveData, "reserveData backend");
+        const reserve = await Reserve.findOne({ _id: propertyId })
+        if (!reserve) {
+            const newReserve = new Reserve({
+                username: reserveData.name,
+                mobile: reserveData.contact,
+                email: reserveData.email,
+                interest: reserveData.interest,
+                OwnerRef: ownerId,
+                Property_id: propertyId,
+                UserRef: userId
+            })
+            newReserve.save()
+            return res.status(200).json({ success: true, message: "Property Reserved!", reserve, newReserve })
+        } else {
+            return res.json({ success: false, message: "Reservation unsuccessfull!" })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const FetchReservations = async (req, res) => {
+    try {
+        const enquiryData = await Reserve.find({})
+        if(enquiryData){
+            return res.status(200).json({success: true, message: "Data fetched successfully!", enquiryData})
+        }else{
+            return res.json({success: false, message: "Error while fetching data!"})
+        }
     } catch (error) {
         console.log(error);
     }

@@ -5,6 +5,7 @@ import {
     cancelPayment,
     CheckIsBooked,
     EditProfileData,
+    FetchReservations,
     forgotPass,
     GetPaginateProperty,
     GetProfileData,
@@ -17,6 +18,7 @@ import {
     PaymentSuccess,
     registerUser,
     ResendOtp,
+    ReserveProperty,
     resetPassword,
     UserLogin
 } from '../controllers/UserController.js';
@@ -39,12 +41,14 @@ router.post('/property/success/:id', UserAuth, PaymentSuccess)
 router.get('/paymenthistory', UserAuth, PaymentHistory)
 router.post('/paymenthistory/:id', UserAuth, cancelPayment)
 router.post('/resendotp', ResendOtp)
-router.get('/getprofiledata/:id', GetProfileData)
+router.get('/getprofiledata/:id',UserAuth, GetProfileData)
 router.get('/properties/:page', GetPaginateProperty);
 router.post('/wishlist', AddToWishlist);
-router.get('/wishlist/:id', getWishlistData);
+router.get('/wishlist/:id',UserAuth, getWishlistData);
 router.post('/profileimage/:id', AddProfileImage);
 router.post('/editprofile/:id', EditProfileData);
+router.post('/reserve/:propertyId', ReserveProperty);
+router.get('/enquiry',UserAuth, FetchReservations);
 
 
 export default router
