@@ -12,6 +12,8 @@ import mailSender from "../utils/mailSender.js";
 import otpGenerator from 'otp-generator'
 import Wishlist from "../models/WishlistModel.js";
 import Reserve from "../models/ReserveModal.js";
+import { isValidObjectId } from 'mongoose';
+
 
 
 const securePassword = async (password) => {
@@ -219,9 +221,26 @@ export const GooglAuthLogin = async (req, res) => {
 }
 
 export const GetProperty = async (req, res) => {
-    // console.log(id,"iddddddd");
     try {
-        const property = await Property.find({ is_verified: true, is_hide: false })
+        const { id } = req.params;
+        if (!isValidObjectId(id)) {
+            return res.status(400).json({ success: false, message: "Invalid property ID format" });
+        }
+        const property = await Property.findOne({ _id: id });
+        if (property) {
+            return res.status(200).json({ success: true, message: "Property fetched successfully!", data: property });
+        } else {
+            return res.status(404).json({ success: false, message: "Property not found" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+export const GetPropertyData = async (req, res) => {
+    try {
+        const property = await Property.find({})
         if (property) {
             return res.status(200).json({ success: true, message: "Properties Fetched Successfully!", data: property });
         } else {
@@ -421,7 +440,7 @@ export const GetPaginateProperty = async (req, res) => {
     try {
         const { page = 1, pageSize = 6 } = req.params;
 
-        const PropertyData = await Property.find({is_hide: false})
+        const PropertyData = await Property.find({ is_hide: false })
             .skip((page - 1) * pageSize)
             .limit(parseInt(pageSize))
             .exec();
@@ -542,10 +561,10 @@ export const ReserveProperty = async (req, res) => {
 export const FetchReservations = async (req, res) => {
     try {
         const enquiryData = await Reserve.find({})
-        if(enquiryData){
-            return res.status(200).json({success: true, message: "Data fetched successfully!", enquiryData})
-        }else{
-            return res.json({success: false, message: "Error while fetching data!"})
+        if (enquiryData) {
+            return res.status(200).json({ success: true, message: "Data fetched successfully!", enquiryData })
+        } else {
+            return res.json({ success: false, message: "Error while fetching data!" })
         }
     } catch (error) {
         console.log(error);

@@ -10,6 +10,7 @@ import {
     GetPaginateProperty,
     GetProfileData,
     GetProperty,
+    GetPropertyData,
     getWishlistData,
     GooglAuthLogin,
     GooglAuthRegister,
@@ -34,7 +35,8 @@ router.post('/forgotPassword', forgotPass)
 router.post('/resetpassword', resetPassword)
 router.post('/userRegisterWithGoogle', GooglAuthRegister)
 router.post('/userLoginWithGoogle', GooglAuthLogin)
-router.get('/property', UserAuth, GetProperty)
+router.get('/property/:id', UserAuth, GetProperty)
+router.get('/property', UserAuth, GetPropertyData)
 router.post('/property/bookproperty/:id', UserAuth, CheckIsBooked)
 router.post('/property/paymentreq/:id', UserAuth, Payment)
 router.post('/property/success/:id', UserAuth, PaymentSuccess)
