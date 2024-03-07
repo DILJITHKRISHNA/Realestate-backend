@@ -21,6 +21,10 @@ const wishlistSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    userRef: {
+        type: String,
+        required: true
+    },
 })
 
 const Wishlist = mongoose.model('Wishlist', wishlistSchema)

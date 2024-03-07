@@ -13,6 +13,7 @@ import otpGenerator from 'otp-generator'
 import Wishlist from "../models/WishlistModel.js";
 import Reserve from "../models/ReserveModal.js";
 import { isValidObjectId } from 'mongoose';
+import Category from "../models/CategoryModel.js";
 
 
 
@@ -295,7 +296,7 @@ export const Payment = async (req, res) => {
 export const PaymentSuccess = async (req, res) => {
     console.log("enter to payment success");
     try {
-        const { data, userId } = req.body
+        const { data, userId, ownerId } = req.body
         const { id } = req.params
         console.log(id, data, "iddd backend");
         const rent = await Property.findById({ _id: id })
@@ -324,6 +325,7 @@ export const PaymentSuccess = async (req, res) => {
                     mobile: data.contact,
                     property_id: id,
                     user_id: userId,
+                    owner_id: ownerId,
                     Rent: rent.Rent,
                     email: data.email,
                     bookingStatus: "Success",
@@ -440,7 +442,7 @@ export const GetPaginateProperty = async (req, res) => {
     try {
         const { page = 1, pageSize = 6 } = req.params;
 
-        const PropertyData = await Property.find({ is_hide: false })
+        const PropertyData = await Property.find({ is_hide: false, is_verified: true })
             .skip((page - 1) * pageSize)
             .limit(parseInt(pageSize))
             .exec();
@@ -466,7 +468,7 @@ export const GetPaginateProperty = async (req, res) => {
 
 export const AddToWishlist = async (req, res) => {
     try {
-        const { name, imageUrls, type, rent, ownerId } = req.body
+        const { name, imageUrls, type, rent, ownerId, userRef } = req.body
         const addData = await Wishlist.findOne({ name: name })
         if (addData) {
             return res.status(200).json({ success: false, message: "error while saving data" })
@@ -476,6 +478,7 @@ export const AddToWishlist = async (req, res) => {
                 Rent: rent,
                 type: type,
                 ownerRef: ownerId,
+                userRef: userRef,
                 imageUrls: imageUrls,
             })
             NewSavedData.save()
@@ -487,7 +490,6 @@ export const AddToWishlist = async (req, res) => {
 }
 export const getWishlistData = async (req, res) => {
     try {
-        const { id } = req.params
         const getData = await Wishlist.find({})
         if (getData) {
             return res.status(200).json({ success: true, message: "Property Fetched from wishlist", getData })
@@ -568,5 +570,71 @@ export const FetchReservations = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
+    }
+}
+export const ShareProperty = async (req, res) => {
+    try {
+        const { propId } = req.params;
+        const share = req.body;
+        const property = await Property.findOne({ _id: propId });
+        const possibleName = share.email.split('@')[0];
+
+        const baseUrl = process.env.NODE_ENV === 'production'
+            ? 'https://your-production-domain.com'//add domain here after hosting
+            : 'http://localhost:5000'; 
+
+        const propertyLink = `${baseUrl}/property/${property._id}`;
+
+        const message = `
+        Hi ${possibleName},
+
+        I'm excited to share a property that I think you might be interested in. It's located at ${property.location}.
+        <br/>
+        To learn more about this property, <a href="${propertyLink}">click here</a>.
+        <br/>
+        I'm confident you'll love the quiet neighborhood and convenient location. Feel free to reach out if you have any questions.
+        <br/>
+        <p><strong>P.S. The property also features a recently renovated kitchen with stainless steel appliances!</strong></p>
+        
+        Thank you`;
+        
+        if (property) {
+            mailSender(
+                share.email,
+                'Share Property',
+                message
+            );
+            return res.status(200).json({ success: true });
+        } else {
+            return res.json({ success: false, message: "Property does not exist!" });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const FetchCategory = async (req, res) => {
+    try {
+        const categoryList = await Category.find({})
+        if (categoryList) {
+            return res.status(200).json({ success: true, message: "Category Fetching Successfull", categoryList })
+        } else {
+            return res.status(500).json({ success: false, message: "Error while fetching Data" });
+        }
+    } catch (error) {
+        console.log("categoryList Data", error);
+    }
+}
+export const getPropertyData = async (req, res) => {
+    try {
+        const { id } = req.params
+        const propertyList = await Property.find({_id: id})
+        if (propertyList) {
+            return res.status(200).json({ success: true, message: "propertyList Fetching Successfull", propertyList })
+        } else {
+            return res.status(500).json({ success: false, message: "Error while fetching Data" });
+        }
+    } catch (error) {
+        console.log("categoryList Data", error);
     }
 }

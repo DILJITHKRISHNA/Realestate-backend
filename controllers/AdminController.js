@@ -169,26 +169,28 @@ export const UserblockHandle = async (req, res) => {
         const { id } = req.params
         const UserData = await User.findOne({ _id: id })
 
-        if (!UserData.is_block == true) {
+        if (UserData.is_block) {
             const Updatedata = await User.updateOne(
-                { _id: id },
-                { $set: { is_block: true } }
-            )
-            console.log(Updatedata, "updated dataaaaaaaa");
-            return res.status(200).json({ success: true, message: "Successfully Unblocked User", Updatedata, UserData })
-        } else {
-            const newData = await User.updateOne(
                 { _id: id },
                 { $set: { is_block: false } }
             );
+            console.log(Updatedata, "updated dataaaaaaaa");
+            return res.status(200).json({ success: true, message: "Successfully Unblocked User", Updatedata, UserData });
+        } else {
+            const newData = await User.updateOne(
+                { _id: id },
+                { $set: { is_block: true } }
+            );
             console.log(newData, "newww");
             console.log(UserData, "userdataaaa");
-            return res.json({ success: true, message: "Successfully Unblocked User", newData, UserData });
+            return res.json({ success: true, message: "Successfully Blocked User", newData, UserData });
         }
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
-}
+};
+
 
 export const OwnerblockHandle = async (req, res) => {
     console.log("enter to Owner block handle controller");
@@ -325,7 +327,7 @@ export const EditCategory = async (req, res) => {
         const { id } = req.params
         const { category } = req.body
         const CategoryDetails = await Category.findOne({ _id: id })
-        const isExist = await Category.findOne({  category: { $regex: new RegExp(category, 'i') } })
+        const isExist = await Category.findOne({ category: { $regex: new RegExp(category, 'i') } })
         if (CategoryDetails && !isExist) {
             const updateCategory = await Category.updateOne(
                 { _id: id },

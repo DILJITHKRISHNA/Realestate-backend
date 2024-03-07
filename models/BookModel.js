@@ -23,6 +23,9 @@ const bookSchema = new mongoose.Schema({
     user_id: {
         type: String,
     },
+    owner_id: {
+        type: String,
+    },
     email: {
         type: String,
     },

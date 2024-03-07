@@ -32,16 +32,16 @@ router.post('/owner/profile', OwnerAuth, handleKycData)
 router.post('/owner/ownerRegisterWithGoogle', RegisterWithGoogle)
 router.get('/kyc', OwnerAuth, GetKycData)
 router.post(`/owner/property/:id`, OwnerAuth, AddProperty)
-router.post('/owner/uploadimage', OwnerAuth, ImageUpload)
+router.put('/owner/uploadimage', OwnerAuth, ImageUpload)
 router.get('/owner/getproperty', OwnerAuth, getPropertyData)
-router.post('/owner/editproperty/:id', OwnerAuth, EditProperty)
-router.post('/owner/hideproperty/:id', OwnerAuth, hideProperty)
+router.put('/owner/editproperty/:id', OwnerAuth, EditProperty)
+router.patch('/owner/hideproperty/:id', OwnerAuth, hideProperty)
 router.get('/owner/FetchBookings', OwnerAuth, GetBookingData)
 router.get('/owner/getproperty/:id', OwnerAuth, FetchProperty)
 router.get('/owner/fetchcategory', OwnerAuth, FetchCategory)
 router.get('/properties/:page', GetPaginateProperty);
 router.get('/owner/profile/:id', getOwnerData);
-router.post('/profileimage/:id', Addprofileimage);
+router.patch('/profileimage/:id', Addprofileimage);
 
 
 

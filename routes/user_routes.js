@@ -5,11 +5,13 @@ import {
     cancelPayment,
     CheckIsBooked,
     EditProfileData,
+    FetchCategory,
     FetchReservations,
     forgotPass,
     GetPaginateProperty,
     GetProfileData,
     GetProperty,
+    getPropertyData,
     GetPropertyData,
     getWishlistData,
     GooglAuthLogin,
@@ -21,6 +23,7 @@ import {
     ResendOtp,
     ReserveProperty,
     resetPassword,
+    ShareProperty,
     UserLogin
 } from '../controllers/UserController.js';
 import { sendOTP, verifyOtp } from '../controllers/OtpController.js';
@@ -46,11 +49,14 @@ router.post('/resendotp', ResendOtp)
 router.get('/getprofiledata/:id',UserAuth, GetProfileData)
 router.get('/properties/:page', GetPaginateProperty);
 router.post('/wishlist', AddToWishlist);
-router.get('/wishlist/:id',UserAuth, getWishlistData);
+router.get('/wishlistdata',UserAuth, getWishlistData);
 router.post('/profileimage/:id', AddProfileImage);
-router.post('/editprofile/:id', EditProfileData);
+router.put('/editprofile/:id', EditProfileData);
 router.post('/reserve/:propertyId', ReserveProperty);
 router.get('/enquiry',UserAuth, FetchReservations);
+router.post('/shareproperty/:propId', ShareProperty);
+router.get('/fetchcategory', FetchCategory);
+router.get('/propertiesData/:id', getPropertyData);
 
 
 export default router

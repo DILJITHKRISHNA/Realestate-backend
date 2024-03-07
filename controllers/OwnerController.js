@@ -9,6 +9,7 @@ import Property from "../models/PropertyModel.js";
 import Bookings from '../models/BookModel.js'
 import Category from '../models/CategoryModel.js'
 import cloudinary from "../utils/cloudinary.js";
+import { ObjectId } from "mongodb";
 
 const securePassword = async (password) => {
     try {
@@ -325,7 +326,9 @@ export const getPropertyData = async (req, res) => {
 export const EditProperty = async (req, res) => {
     try {
         const { id } = req.params
+        console.log(req.params,"idd in beddaas---ooooooooooooooooooooooooooooooooooooooooooo");
         const { title, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
+        console.log(req.body,"boddy nokkuu");
         const property = await Property.findOne({ _id: id })
 
         if (property) {
@@ -416,22 +419,25 @@ export const FetchCategory = async (req, res) => {
 }
 
 export const GetPaginateProperty = async (req, res) => {
+    console.log(req.params,"p[[][p8888888888888888888888");
     try {
-        const { page = 1, pageSize = 4 } = req.params;
+        const {page , pageSize = 6 } = req.params;
         const PropertyData = await Property.find({})
             .skip((page - 1) * pageSize)
             .limit(parseInt(pageSize))
             .exec();
-
-        const totalProperties = await Property.countDocuments();
+ 
+            
+        const totalCount = await Property.countDocuments();
 
         if (PropertyData) {
-            const totalPages = Math.ceil(totalProperties / parseInt(pageSize));
+            const totalPages = Math.ceil(totalCount / parseInt(pageSize));
             return res.status(200).json({
                 success: true,
                 message: "PropertyData fetched successfully",
                 PropertyData,
                 totalPages,
+                totalCount
             });
         } else {
             return res.json({ success: false, message: "Error while fetching data" });
