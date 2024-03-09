@@ -8,11 +8,13 @@ import {
     FetchCategory,
     FetchReservations,
     forgotPass,
+    GetChatUserToSidebar,
     GetPaginateProperty,
     GetProfileData,
     GetProperty,
     getPropertyData,
     GetPropertyData,
+    GetWalletHistory,
     getWishlistData,
     GooglAuthLogin,
     GooglAuthRegister,
@@ -24,7 +26,8 @@ import {
     ReserveProperty,
     resetPassword,
     ShareProperty,
-    UserLogin
+    UserLogin,
+    walletPayment
 } from '../controllers/UserController.js';
 import { sendOTP, verifyOtp } from '../controllers/OtpController.js';
 import { UserAuth } from '../Middleware/UserAuth.js';
@@ -50,13 +53,17 @@ router.get('/getprofiledata/:id',UserAuth, GetProfileData)
 router.get('/properties/:page', GetPaginateProperty);
 router.post('/wishlist', AddToWishlist);
 router.get('/wishlistdata',UserAuth, getWishlistData);
-router.post('/profileimage/:id', AddProfileImage);
+router.patch('/profileimage/:id', AddProfileImage);
 router.put('/editprofile/:id', EditProfileData);
 router.post('/reserve/:propertyId', ReserveProperty);
 router.get('/enquiry',UserAuth, FetchReservations);
 router.post('/shareproperty/:propId', ShareProperty);
-router.get('/fetchcategory', FetchCategory);
+router.get('/fetchcategory',UserAuth, FetchCategory);
 router.get('/propertiesData/:id', getPropertyData);
+router.put('/walletPayment',UserAuth, walletPayment);
+router.get('/wallethistory',UserAuth, GetWalletHistory);
+router.get('/wallethistory',UserAuth, GetWalletHistory);
+router.get('/getchatusers',UserAuth, GetChatUserToSidebar);
 
 
 export default router

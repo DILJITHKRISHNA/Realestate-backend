@@ -298,7 +298,6 @@ export const PaymentSuccess = async (req, res) => {
     try {
         const { data, userId, ownerId } = req.body
         const { id } = req.params
-        console.log(id, data, "iddd backend");
         const rent = await Property.findById({ _id: id })
         const booking = await Booking.findOne({ email: data.email })
         if (
@@ -328,6 +327,7 @@ export const PaymentSuccess = async (req, res) => {
                     owner_id: ownerId,
                     Rent: rent.Rent,
                     email: data.email,
+                    payment_type: 'Stripe',
                     bookingStatus: "Success",
                     relocationDate: data.relocationDate,
                     is_canceled: false
@@ -370,7 +370,7 @@ export const cancelPayment = async (req, res) => {
             )
             const updateProperty = await Property.findByIdAndUpdate(
                 { _id: propId },
-                { $set: { is_Booked: false } }
+                { $set: { is_Booked: false, is_hide: false } }
             )
 
             const user = await User.findById(history.user_id);
@@ -391,9 +391,7 @@ export const cancelPayment = async (req, res) => {
 export const ResendOtp = async (req, res) => {
     try {
         const { email } = req.body
-        console.log(email, "lllllll");
         const result = await User.findOne({ email: email })
-        console.log(result, "result in backendnd");
         if (result) {
 
             let otp = otpGenerator.generate(4, {
@@ -517,7 +515,6 @@ export const EditProfileData = async (req, res) => {
     try {
         const { id } = req.params
         const formData = req.body
-        console.log(formData, "formdaaataa backend");
         const editProfile = await User.findByIdAndUpdate(
             { _id: id },
             {
@@ -537,8 +534,6 @@ export const ReserveProperty = async (req, res) => {
     try {
         const { propertyId } = req.params
         const { reserveData, userId, ownerId } = req.body
-        console.log(userId, ownerId, " user and owner iddss");
-        console.log(reserveData, "reserveData backend");
         const reserve = await Reserve.findOne({ _id: propertyId })
         if (!reserve) {
             const newReserve = new Reserve({
@@ -581,7 +576,7 @@ export const ShareProperty = async (req, res) => {
 
         const baseUrl = process.env.NODE_ENV === 'production'
             ? 'https://your-production-domain.com'//add domain here after hosting
-            : 'http://localhost:5000'; 
+            : 'http://localhost:5000';
 
         const propertyLink = `${baseUrl}/property/${property._id}`;
 
@@ -597,7 +592,7 @@ export const ShareProperty = async (req, res) => {
         <p><strong>P.S. The property also features a recently renovated kitchen with stainless steel appliances!</strong></p>
         
         Thank you`;
-        
+
         if (property) {
             mailSender(
                 share.email,
@@ -628,7 +623,7 @@ export const FetchCategory = async (req, res) => {
 export const getPropertyData = async (req, res) => {
     try {
         const { id } = req.params
-        const propertyList = await Property.find({_id: id})
+        const propertyList = await Property.find({ _id: id })
         if (propertyList) {
             return res.status(200).json({ success: true, message: "propertyList Fetching Successfull", propertyList })
         } else {
@@ -636,5 +631,77 @@ export const getPropertyData = async (req, res) => {
         }
     } catch (error) {
         console.log("categoryList Data", error);
+    }
+}
+export const walletPayment = async (req, res) => {
+    try {
+        const { propId, userId, ownerId, data } = req.body
+        const propertyList = await Property.findOne({ _id: propId })
+        const PropertyRent = propertyList.Rent
+        if (propertyList) {
+            const userList = await User.findOne({ _id: userId })
+            const wallet = userList.wallet;
+            if (wallet >= PropertyRent) {
+                const updateWallet = await User.findByIdAndUpdate(
+                    { _id: userId },
+                    { $inc: { wallet: -PropertyRent } }
+                )
+                const propertyList = await Property.updateOne(
+                    { _id: propId },
+                    {$set: {is_Booked: true, is_hide: true}}
+                )
+                const newBooking = await Booking({
+                    username: data.name,
+                    mobile: data.contact,
+                    property_id: propId,
+                    user_id: userId,
+                    owner_id: ownerId,
+                    Rent: PropertyRent,
+                    email: data.email,
+                    payment_type: 'Wallet',
+                    bookingStatus: "Success",
+                    relocationDate: data.re_locationDate,
+                    is_canceled: false
+                })
+                newBooking.save()
+
+                return res.status(200).json({ success: true, message: "Wallet payment successfull!", updateWallet, userList, propertyList })
+            } else {
+                return res.json({ success: false, message: "Wallet Balance is not enough to buy this!", userList, propertyList });
+            }
+        } else {
+            return res.json({ success: false, message: "We couldn't find the property!" })
+        }
+
+
+    } catch (error) {
+        console.log("categoryList Data", error);
+    }
+}
+
+export const GetWalletHistory = async (req, res) =>{
+    try {
+        const  Wallethistory=await Booking.find({payment_type: "Wallet"})
+        console.log(Wallethistory,"wallet history dataaa");
+        if(Wallethistory){
+            return res.status(200).json({success: true, message: "wallet payment data fetched successfully!", Wallethistory})
+        }else{
+            return res.json({success: false, message: "Error while fetching data!"})
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const GetChatUserToSidebar = async (req, res) =>{
+    try {
+        const loggedinUserId = req.headers.userId
+        const  filteredUsers = await User.find({_id: {$ne: loggedinUserId}}).select('-password');
+        if(filteredUsers){
+            return res.status(200).json({success: true, filteredUsers})
+        }else{
+            return res.json({success: false, message: "Error while fetching data!"})
+        }
+    } catch (error) {
+        console.log(error);
     }
 }

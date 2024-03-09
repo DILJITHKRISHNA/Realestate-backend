@@ -26,6 +26,9 @@ const bookSchema = new mongoose.Schema({
     owner_id: {
         type: String,
     },
+    payment_type: {
+        type: String,
+    },
     email: {
         type: String,
     },
