@@ -8,7 +8,9 @@ import {
     FetchCategory,
     FetchReservations,
     forgotPass,
+    GetChatOwnerToSidebar,
     GetChatUserToSidebar,
+    getOwnerData,
     GetPaginateProperty,
     GetProfileData,
     GetProperty,
@@ -24,6 +26,7 @@ import {
     registerUser,
     ResendOtp,
     ReserveProperty,
+    ResetPassword,
     resetPassword,
     ShareProperty,
     UserLogin,
@@ -31,6 +34,7 @@ import {
 } from '../controllers/UserController.js';
 import { sendOTP, verifyOtp } from '../controllers/OtpController.js';
 import { UserAuth } from '../Middleware/UserAuth.js';
+
 const router = express.Router()
 
 router.post('/signup', registerUser)
@@ -53,7 +57,7 @@ router.get('/getprofiledata/:id',UserAuth, GetProfileData)
 router.get('/properties/:page', GetPaginateProperty);
 router.post('/wishlist', AddToWishlist);
 router.get('/wishlistdata',UserAuth, getWishlistData);
-router.patch('/profileimage/:id', AddProfileImage);
+router.post('/profileimage/:id', AddProfileImage);
 router.put('/editprofile/:id', EditProfileData);
 router.post('/reserve/:propertyId', ReserveProperty);
 router.get('/enquiry',UserAuth, FetchReservations);
@@ -63,7 +67,11 @@ router.get('/propertiesData/:id', getPropertyData);
 router.put('/walletPayment',UserAuth, walletPayment);
 router.get('/wallethistory',UserAuth, GetWalletHistory);
 router.get('/wallethistory',UserAuth, GetWalletHistory);
+router.get('/getchatowners',UserAuth, GetChatOwnerToSidebar);
+router.get('/profile', getOwnerData);
 router.get('/getchatusers',UserAuth, GetChatUserToSidebar);
+router.patch('/resetsecurity/:id',UserAuth, ResetPassword);
+
 
 
 export default router

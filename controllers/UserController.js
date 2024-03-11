@@ -14,6 +14,7 @@ import Wishlist from "../models/WishlistModel.js";
 import Reserve from "../models/ReserveModal.js";
 import { isValidObjectId } from 'mongoose';
 import Category from "../models/CategoryModel.js";
+import Owner from "../models/ownerModel.js";
 
 
 
@@ -499,6 +500,7 @@ export const getWishlistData = async (req, res) => {
     }
 }
 export const AddProfileImage = async (req, res) => {
+    console.log("hiiii");
     try {
         const { id } = req.params
         const imageUrl = req.body
@@ -648,7 +650,7 @@ export const walletPayment = async (req, res) => {
                 )
                 const propertyList = await Property.updateOne(
                     { _id: propId },
-                    {$set: {is_Booked: true, is_hide: true}}
+                    { $set: { is_Booked: true, is_hide: true } }
                 )
                 const newBooking = await Booking({
                     username: data.name,
@@ -679,29 +681,88 @@ export const walletPayment = async (req, res) => {
     }
 }
 
-export const GetWalletHistory = async (req, res) =>{
+export const GetWalletHistory = async (req, res) => {
     try {
-        const  Wallethistory=await Booking.find({payment_type: "Wallet"})
-        console.log(Wallethistory,"wallet history dataaa");
-        if(Wallethistory){
-            return res.status(200).json({success: true, message: "wallet payment data fetched successfully!", Wallethistory})
-        }else{
-            return res.json({success: false, message: "Error while fetching data!"})
+        const Wallethistory = await Booking.find({ payment_type: "Wallet" })
+        console.log(Wallethistory, "wallet history dataaa");
+        if (Wallethistory) {
+            return res.status(200).json({ success: true, message: "wallet payment data fetched successfully!", Wallethistory })
+        } else {
+            return res.json({ success: false, message: "Error while fetching data!" })
         }
     } catch (error) {
         console.log(error);
     }
 }
-export const GetChatUserToSidebar = async (req, res) =>{
+export const GetChatOwnerToSidebar = async (req, res) => {
     try {
         const loggedinUserId = req.headers.userId
-        const  filteredUsers = await User.find({_id: {$ne: loggedinUserId}}).select('-password');
-        if(filteredUsers){
-            return res.status(200).json({success: true, filteredUsers})
-        }else{
-            return res.json({success: false, message: "Error while fetching data!"})
+        const filteredUsers = await User.find({ _id: { $ne: loggedinUserId } }).select('-password');
+        if (filteredUsers) {
+            const filteredOwners = await Owner.find({})
+            return res.status(200).json({ success: true, filteredOwners })
+        } else {
+            return res.json({ success: false, message: "Error while fetching data!" })
         }
     } catch (error) {
         console.log(error);
     }
 }
+
+export const getOwnerData = async (req, res) => {
+    try {
+        const OwnerData = await Owner.find({})
+        if (OwnerData) {
+            return res.status(200).json({ success: true, message: "Successfully fetched ownerData", OwnerData })
+        } else {
+            return res.json({ success: false, message: "error while fetching data" })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const GetChatUserToSidebar = async (req, res) => {
+    try {
+        const filteredUsers = await User.find({})
+        if (filteredUsers) {
+            return res.status(200).json({ success: true, filteredUsers })
+        } else {
+            return res.json({ success: false, message: "Error while fetching data!" })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const ResetPassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const details = req.body;
+        const resetPassword = await User.findOne({ _id: id });
+
+        if (resetPassword) {
+            const comparePass =await bcrypt.compare(details.oldPassword, resetPassword.password);
+            if (comparePass) {
+                if (details.oldPassword === details.newPassword) {
+                    return res.json({ success: false, message: "Old and new passwords must be different." });
+                } else {
+                    const hashedPassword = await securePassword(details.newPassword);
+                    const newPassword = await User.updateOne(
+                        { _id: id },
+                        { $set: { password: hashedPassword } },
+                        { new: true }
+                    );
+
+                    return res.status(200).json({ success: true, message: "Password updated successfully", resetPassword });
+                }
+            } else {
+                return res.json({ success: false, message: "Incorrect old password." });
+            }
+        } else {
+            return res.json({ success: false, message: "Error while Updating Password!" });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
