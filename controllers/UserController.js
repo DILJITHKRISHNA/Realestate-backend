@@ -15,6 +15,7 @@ import Reserve from "../models/ReserveModal.js";
 import { isValidObjectId } from 'mongoose';
 import Category from "../models/CategoryModel.js";
 import Owner from "../models/ownerModel.js";
+import { ObjectId } from "mongodb";
 
 
 
@@ -426,8 +427,7 @@ export const ResendOtp = async (req, res) => {
 
 export const GetProfileData = async (req, res) => {
     try {
-        const { id } = req.params
-        const userData = await User.findOne({ _id: id })
+        const userData = await User.findOne({ _id: req.params.id })
         if (userData) {
             return res.status(200).json({ success: true, message: "Profile data fetched successfully", userData })
         } else {
@@ -741,7 +741,7 @@ export const ResetPassword = async (req, res) => {
         const resetPassword = await User.findOne({ _id: id });
 
         if (resetPassword) {
-            const comparePass =await bcrypt.compare(details.oldPassword, resetPassword.password);
+            const comparePass = await bcrypt.compare(details.oldPassword, resetPassword.password);
             if (comparePass) {
                 if (details.oldPassword === details.newPassword) {
                     return res.json({ success: false, message: "Old and new passwords must be different." });

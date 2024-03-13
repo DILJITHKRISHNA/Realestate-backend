@@ -1,8 +1,8 @@
-import express from "express";
-import { GetMessage, SendMessage } from "../controllers/MessageController.js";
-import { UserAuth } from "../Middleware/UserAuth.js";
+import express from 'express'
+import { addMessage, getMessages } from '../controllers/MessageController.js'
 const router = express.Router()
-router.post("/sendmessages/:userId",UserAuth, SendMessage)
-router.get("/getmessages/:id",UserAuth, GetMessage)
+
+router.post('/chat', addMessage)
+router.get('/chat/:chatId', getMessages)
 
 export default router

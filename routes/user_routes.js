@@ -8,8 +8,6 @@ import {
     FetchCategory,
     FetchReservations,
     forgotPass,
-    GetChatOwnerToSidebar,
-    GetChatUserToSidebar,
     getOwnerData,
     GetPaginateProperty,
     GetProfileData,
@@ -67,10 +65,9 @@ router.get('/propertiesData/:id', getPropertyData);
 router.put('/walletPayment',UserAuth, walletPayment);
 router.get('/wallethistory',UserAuth, GetWalletHistory);
 router.get('/wallethistory',UserAuth, GetWalletHistory);
-router.get('/getchatowners',UserAuth, GetChatOwnerToSidebar);
 router.get('/profile', getOwnerData);
-router.get('/getchatusers',UserAuth, GetChatUserToSidebar);
 router.patch('/resetsecurity/:id',UserAuth, ResetPassword);
+router.get('/getUser/:id',UserAuth, GetProfileData);
 
 
 

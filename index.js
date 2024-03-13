@@ -5,6 +5,7 @@ import cors from "cors";
 import UserRoute from './routes/user_routes.js';
 import OwnerRoute from './routes/owner_route.js'
 import AdminRoute from './routes/admin_route.js'
+import ChatRoute from './routes/chat_route.js'
 import MessageRoute from './routes/message_route.js'
 
 env.config();
@@ -25,7 +26,8 @@ mongoose.connect(process.env.MONGODB_URI).then(() => console.log("Database is su
 app.use('/', UserRoute);
 app.use('/owner', OwnerRoute)
 app.use('/admin', AdminRoute)
-app.use('/', MessageRoute)
+app.use('/chat', ChatRoute)
+app.use('/message', MessageRoute)
 
 app.use((err, req, res, next) => {
     console.log(err);

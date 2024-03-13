@@ -419,7 +419,6 @@ export const FetchCategory = async (req, res) => {
 }
 
 export const GetPaginateProperty = async (req, res) => {
-    console.log(req.params,"p[[][p8888888888888888888888");
     try {
         const {page , pageSize = 6 } = req.params;
         const PropertyData = await Property.find({})
