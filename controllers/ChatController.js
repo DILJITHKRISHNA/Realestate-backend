@@ -32,6 +32,24 @@ export const userChats = async (req, res) => {
     }
 }
 
+export const ownerChats = async (req, res) => {
+    try {
+        const { ownerId } = req.params
+        const chat = await ChatModel.find({
+            members: {$in: [ownerId]}
+        }).populate({
+            path: "members",
+            select: "username imageUrls",
+            match: {_id: {$ne: ownerId}},
+            model: 'User'
+        })
+       return res.status(200).json(chat)
+        
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
+
 export const findChat = async (req, res) => {
     try {
         const chat = await ChatModel.findOne({

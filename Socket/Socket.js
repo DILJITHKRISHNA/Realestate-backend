@@ -1,32 +1,50 @@
-import io from 'socket.io';
+import { Server } from 'socket.io';
+import express from "express";
+import http from 'http'
+import cors from 'cors'
 
-
-const Io = new io(server, {
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5000",
-
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
+        credentials: true
     }
-})
+});
 
 let activeUsers = []
-Io.on('connection', (socket) => {
-    //add new user
-    socket.on('new-user-add', (newUserId)=>{
-        //if user is not added successfully
-        if(!activeUsers.some((user)=>user.userId === newUserId)){
+
+io.on('connection', (socket) => {
+    socket.on('new-user-add', (newUserId) => {
+        if (!activeUsers.some((user) => user.userId === newUserId)) {
             activeUsers.push({
                 userId: newUserId,
                 socketId: socket.id
             })
         }
         console.log("Connected Users", activeUsers);
-        Io.emit('get-users', activeUsers)
+        io.emit('get-users', activeUsers)
     })
+
+    socket.on("send-message", (data) => {
+        const { receiverId } = data;
+        // console.log("sending from socket to : ",receiverId);
+        const user = activeUsers.find((user) =>  user.userId === receiverId);
+        console.log(user, "equal?");
+        if (user) {
+            io.to(user.socketId).emit("receive-message", data);
+        } else {
+            console.log("User not found for receiverId:", receiverId);
+        }
+    });
 
     socket.on("disconnect", () => {
-        activeUsers = activeUsers.filter((user)=> user.socketId !== socket.id)
+        activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
         console.log("User Disconnected", activeUsers);
 
-        Io.emit('get-users', activeUsers)
+        io.emit('get-users', activeUsers)
     })
 })
+
+export { app, server }
