@@ -25,7 +25,11 @@ export const userChats = async (req, res) => {
             match: {_id: {$ne: userId}},
             model: 'Owner'
         })
-       return res.status(200).json(chat)
+        const Members = await ChatModel.find({
+            members: {$in: [userId]}
+        })
+
+       return res.status(200).json({success: true, message:"Data fetched successfully", chat, Members})
         
     } catch (error) {
         res.status(500).json(error)
@@ -35,7 +39,8 @@ export const userChats = async (req, res) => {
 export const ownerChats = async (req, res) => {
     try {
         const { ownerId } = req.params
-        const chat = await ChatModel.find({
+        console.log(ownerId,"99)))))");
+        const chat = await ChatModel.find({ 
             members: {$in: [ownerId]}
         }).populate({
             path: "members",

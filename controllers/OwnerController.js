@@ -450,7 +450,9 @@ export const GetPaginateProperty = async (req, res) => {
 export const getOwnerData = async(req, res) => {
     try {
         const { id } = req.params
+        console.log(id,"iddd for owner");
         const OwnerData = await Owner.findOne({_id: id})
+        console.log(OwnerData,"owner daatta");
         if(OwnerData){
            return res.status(200).json({success: true, message: "Successfully fetched ownerData", OwnerData})
         }else{

@@ -1,7 +1,6 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -29,5 +28,14 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DILJITHKRISHNA/Realestate-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DILJITHKRISHNA/Realestate-backend/issues"
+  },
+  "homepage": "https://github.com/DILJITHKRISHNA/Realestate-backend#readme",
+  "description": ""
 }
