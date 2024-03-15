@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
 
     socket.on("send-message", (data) => {
         const { receiverId } = data;
-        console.log(data, '--------------ddddgdsnetertbfgdb----------------');
+        console.log(receiverId, '--------------ddddgdsnetertbfgdb----------------');
         const user = activeUsers.find((user) => user.userId === receiverId);
         console.log(user, "equal?");
         if (user) {
