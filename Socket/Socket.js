@@ -23,25 +23,25 @@ io.on('connection', (socket) => {
                 socketId: socket.id
             })
         }
-        console.log("Connected Users", activeUsers);
+        // console.log("Connected Users", activeUsers);
         io.emit('get-users', activeUsers)
     })
 
     socket.on("send-message", (data) => {
         const { receiverId } = data;
-        console.log(receiverId, '--------------ddddgdsnetertbfgdb----------------');
+        // console.log(receiverId, '--------------ddddgdsnetertbfgdb----------------');
         const user = activeUsers.find((user) => user.userId === receiverId);
-        console.log(user, "equal?");
+        // console.log(user, "equal?");
         if (user) {
             io.to(user.socketId).emit("receive-message", data);
         } else {
-            console.log("User not found for receiverId:", receiverId);
+            // console.log("User not found for receiverId:", receiverId);
         }
     });
 
     socket.on("disconnect", () => {
         activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
-        console.log("User Disconnected", activeUsers);
+        // console.log("User Disconnected", activeUsers);
 
         io.emit('get-users', activeUsers)
     })

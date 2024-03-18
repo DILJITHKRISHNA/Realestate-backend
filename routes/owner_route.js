@@ -2,6 +2,7 @@ import express from 'express'
 import {
     AddProperty,
     Addprofileimage,
+    EditOwnerProfileData,
     EditProperty,
     FetchCategory,
     FetchProperty,
@@ -11,6 +12,7 @@ import {
     ImageUpload,
     OwnersendOtp,
     RegisterWithGoogle,
+    ResetOwnerPassword,
     getOwnerData,
     getPropertyData,
     handleKycData,
@@ -42,6 +44,10 @@ router.get('/owner/fetchcategory', OwnerAuth, FetchCategory)
 router.get('/properties/:page', GetPaginateProperty);
 router.get('/owner/profile/:id', getOwnerData);
 router.patch('/profileimage/:id', Addprofileimage);
+router.patch('/resetownersecurity/:id',OwnerAuth, ResetOwnerPassword);
+router.put('/editprofile/:id', EditOwnerProfileData);
+
+
 
 
 

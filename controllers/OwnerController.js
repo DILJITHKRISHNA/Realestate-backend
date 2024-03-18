@@ -481,3 +481,56 @@ export const Addprofileimage = async(req, res) => {
         console.log(error);
     }
 }
+
+export const ResetOwnerPassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const details = req.body;
+        const resetPassword = await Owner.findOne({ _id: id });
+
+        if (resetPassword) {
+            const comparePass = await bcrypt.compare(details.oldPassword, resetPassword.password);
+            if (comparePass) {
+                if (details.oldPassword === details.newPassword) {
+                    return res.json({ success: false, message: "Old and new passwords must be different." });
+                } else {
+                    const hashedPassword = await securePassword(details.newPassword);
+                    const newPassword = await Owner.updateOne(
+                        { _id: id },
+                        { $set: { password: hashedPassword } },
+                        { new: true }
+                    );
+
+                    return res.status(200).json({ success: true, message: "Password updated successfully", resetPassword });
+                }
+            } else {
+                return res.json({ success: false, message: "Incorrect old password." });
+            }
+        } else {
+            return res.json({ success: false, message: "Error while Updating Password!" });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+export const EditOwnerProfileData = async (req, res) => {
+    try {
+        const { id } = req.params
+        const formData = req.body
+        const editProfile = await Owner.findByIdAndUpdate(
+            { _id: id },
+            {
+                $set: {
+                    username: formData.name,
+                    email: formData.email,
+                    mobile: formData.mobile
+                }
+            }
+        )
+        return res.status(200).json({ success: true, message: "Profile Data Updated", editProfile })
+    } catch (error) {
+        console.log(error);
+    }
+}
