@@ -534,3 +534,16 @@ export const EditOwnerProfileData = async (req, res) => {
         console.log(error);
     }
 }
+export const FetchPropertyForChart = async (req, res) => {
+    try {
+        const { id } = req.params
+        const GetData = await Property.findOne({ ownerRef: id })
+        if (GetData) {
+            return res.status(200).json({ success: true, message: "FetchProperty data from Bookings", GetData })
+        } else {
+            return res.status(500).json({ success: false, message: "Error while fetching Data" });
+        }
+    } catch (error) {
+        console.log("GetBooking Data", error);
+    }
+}

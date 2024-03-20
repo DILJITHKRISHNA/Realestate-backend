@@ -6,6 +6,7 @@ import {
     EditProperty,
     FetchCategory,
     FetchProperty,
+    FetchPropertyForChart,
     GetBookingData,
     GetKycData,
     GetPaginateProperty,
@@ -46,6 +47,7 @@ router.get('/owner/profile/:id', getOwnerData);
 router.patch('/profileimage/:id', Addprofileimage);
 router.patch('/resetownersecurity/:id',OwnerAuth, ResetOwnerPassword);
 router.put('/editprofile/:id', EditOwnerProfileData);
+router.get('/owner/getownerproperty/:id', OwnerAuth, FetchPropertyForChart)
 
 
 

@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:5173",
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
+        methods: ["GET", "POST", "PUT", "PATCH"],
         credentials: true
     }
 });
@@ -38,6 +38,9 @@ io.on('connection', (socket) => {
             // console.log("User not found for receiverId:", receiverId);
         }
     });
+
+    socket.on('typing',(room)=>socket.in(room).emit('typing'))
+    socket.on('stop typing',(room)=>socket.in(room).emit('stop typing'))
 
     socket.on("disconnect", () => {
         activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
