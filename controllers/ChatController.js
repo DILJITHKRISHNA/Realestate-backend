@@ -3,24 +3,21 @@ import ChatModel from '../models/ChatModel.js'
 export const createChat = async (req, res) => {
     try {
         const { senderId, receiverId } = req.params
+        console.log(senderId, receiverId,"kkkkkkkkkkkkkkkkkkkkk");
         const alreadyExists = await ChatModel.findOne({
-            members: {
-                $all: [
-                    { $elemMatch: { $eq: senderId } },
-                    { $elemMatch: { $eq: receiverId } }
-                ]
-            }
+            members: { $all: [senderId, receiverId] },
         });
-        console.log(alreadyExists, "alredtt");
         if (!alreadyExists) {
 
             const newChat = new ChatModel({
                 members: [senderId, receiverId]
             });
-            const result = await newChat.save()
-            return res.status(200).json(result)
+            if(newChat){
+                const result = await newChat.save()
+                return res.status(200).json(result)
+            }
         } else {
-            return res.json({ success: false, message: "Chat already exists!" })
+            return res.json({ success: false, message: "Chat already exists!", alreadyExists })
         }
 
     } catch (error) {
@@ -37,7 +34,7 @@ export const userChats = async (req, res) => {
         }).populate({
             path: "members",
             select: "username imageUrls",
-            match: { _id: { $ne: userId } },
+            // match: { _id: { $ne: userId } },
             model: 'Owner'
         })
         const Members = await ChatModel.find({

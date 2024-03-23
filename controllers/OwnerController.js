@@ -235,7 +235,6 @@ export const GetKycData = async (req, res) => {
     console.log("enterejhwejrthwejrkjw");
     try {
         const kycData = await Kyc.find({})
-        console.log(kycData, "dataat kyccc");
         if (kycData) {
             return res.status(200).json({ success: true, message: "Successfully get the kyc data", kycData })
         } else {
@@ -250,9 +249,7 @@ export const GetKycData = async (req, res) => {
 export const AddProperty = async (req, res) => {
     try {
         const { id } = req.params
-        console.log(req.body, "bodddddddmasssssss");
         const { title, videoUrl, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
-        console.log(videoUrl, "videoooo lrri");
         const propertyExist = await Property.findOne({ name: title });
         if (propertyExist) {
             return res.json({ success: false, message: "Property with the same title already exists" });
@@ -282,7 +279,6 @@ export const AddProperty = async (req, res) => {
                 is_pending: true,
                 is_saved: false,
             });
-            console.log(newProperty, "new Propertyyy");
 
             const saved = await newProperty.save();
 
@@ -302,7 +298,6 @@ export const ImageUpload = async (req, res) => {
             upload_preset: 'dev_setups'
         })
         const id = uploadedResponse && uploadedResponse.public_id;
-        console.log(uploadedResponse, "uploadresponse");
         return res.json({ success: true, message: 'image Uploaded Successfully', uploadedResponse })
 
     } catch (error) {
@@ -326,9 +321,7 @@ export const getPropertyData = async (req, res) => {
 export const EditProperty = async (req, res) => {
     try {
         const { id } = req.params
-        console.log(req.params,"idd in beddaas---ooooooooooooooooooooooooooooooooooooooooooo");
         const { title, rent, type, state, balconies, imageUrl, additionalDetails, bedroom, bathroom, parking, furnished, buildUpArea, FloorCount, location, country, city } = req.body;
-        console.log(req.body,"boddy nokkuu");
         const property = await Property.findOne({ _id: id })
 
         if (property) {
@@ -420,13 +413,12 @@ export const FetchCategory = async (req, res) => {
 
 export const GetPaginateProperty = async (req, res) => {
     try {
-        const {page , pageSize = 6 } = req.params;
-        const PropertyData = await Property.find({})
+        const {page, pageSize = 6, id } = req.params;
+        const PropertyData = await Property.find({ownerRef: id})
             .skip((page - 1) * pageSize)
             .limit(parseInt(pageSize))
             .exec();
  
-            
         const totalCount = await Property.countDocuments();
 
         if (PropertyData) {
@@ -450,9 +442,7 @@ export const GetPaginateProperty = async (req, res) => {
 export const getOwnerData = async(req, res) => {
     try {
         const { id } = req.params
-        console.log(id,"iddd for owner");
         const OwnerData = await Owner.findOne({_id: id})
-        console.log(OwnerData,"owner daatta");
         if(OwnerData){
            return res.status(200).json({success: true, message: "Successfully fetched ownerData", OwnerData})
         }else{

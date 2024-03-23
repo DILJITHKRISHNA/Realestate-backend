@@ -42,7 +42,7 @@ router.patch('/owner/hideproperty/:id', OwnerAuth, hideProperty)
 router.get('/owner/FetchBookings', OwnerAuth, GetBookingData)
 router.get('/owner/getproperty/:id', OwnerAuth, FetchProperty)
 router.get('/owner/fetchcategory', OwnerAuth, FetchCategory)
-router.get('/properties/:page', GetPaginateProperty);
+router.get('/properties/:page/:id', GetPaginateProperty);
 router.get('/owner/profile/:id', getOwnerData);
 router.patch('/profileimage/:id', Addprofileimage);
 router.patch('/resetownersecurity/:id',OwnerAuth, ResetOwnerPassword);
