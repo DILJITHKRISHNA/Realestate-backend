@@ -9,8 +9,7 @@ import Property from "../models/PropertyModel.js";
 import Bookings from '../models/BookModel.js'
 import Category from '../models/CategoryModel.js'
 import cloudinary from "../utils/cloudinary.js";
-import { ObjectId } from "mongodb";
-
+import axios from 'axios'
 const securePassword = async (password) => {
     try {
         const passwordHash = await bcrypt.hash(password, 10);
@@ -255,6 +254,24 @@ export const AddProperty = async (req, res) => {
             return res.json({ success: false, message: "Property with the same title already exists" });
         } else {
 
+            let latitude, longitude;
+            const address = `${city}, ${state}, ${country}, ${location}`;
+            const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+                params: {
+                    address: address,
+                    key: process.env.GOOGLE_MAPS_API_KEY
+                }
+            });
+            const { results } = response.data;
+            if (results && results.length > 0) {
+                latitude = results[0].geometry.location.lat;
+                longitude = results[0].geometry.location.lng;
+            } else {
+                return res.status(404).json({ success: false, message: 'Location not found' });
+            }
+            console.log(latitude, "latitude");
+            console.log(longitude, "longitude");
+
             const newProperty = new Property({
                 name: title,
                 type: type,
@@ -274,6 +291,8 @@ export const AddProperty = async (req, res) => {
                 videoUrls: videoUrl,
                 state: state,
                 ownerRef: id,
+                latitude: latitude,
+                longitude: longitude,
                 is_verified: false,
                 is_Booked: false,
                 is_pending: true,
@@ -413,12 +432,12 @@ export const FetchCategory = async (req, res) => {
 
 export const GetPaginateProperty = async (req, res) => {
     try {
-        const {page, pageSize = 6, id } = req.params;
-        const PropertyData = await Property.find({ownerRef: id})
+        const { page, pageSize = 6, id } = req.params;
+        const PropertyData = await Property.find({ ownerRef: id })
             .skip((page - 1) * pageSize)
             .limit(parseInt(pageSize))
             .exec();
- 
+
         const totalCount = await Property.countDocuments();
 
         if (PropertyData) {
@@ -439,33 +458,33 @@ export const GetPaginateProperty = async (req, res) => {
     }
 }
 
-export const getOwnerData = async(req, res) => {
+export const getOwnerData = async (req, res) => {
     try {
         const { id } = req.params
-        const OwnerData = await Owner.findOne({_id: id})
-        if(OwnerData){
-           return res.status(200).json({success: true, message: "Successfully fetched ownerData", OwnerData})
-        }else{
-          return res.json({success: false, message: "error while fetching data"})
+        const OwnerData = await Owner.findOne({ _id: id })
+        if (OwnerData) {
+            return res.status(200).json({ success: true, message: "Successfully fetched ownerData", OwnerData })
+        } else {
+            return res.json({ success: false, message: "error while fetching data" })
         }
     } catch (error) {
         console.log(error);
     }
 }
-export const Addprofileimage = async(req, res) => {
+export const Addprofileimage = async (req, res) => {
     try {
         const { id } = req.params
-        console.log(id,"idd");
+        console.log(id, "idd");
         const imageUrl = req.body
-        console.log(imageUrl,"image urllll");
-        const OwnerData = await Owner.findOne({_id: id})
-        if(OwnerData){
+        console.log(imageUrl, "image urllll");
+        const OwnerData = await Owner.findOne({ _id: id })
+        if (OwnerData) {
 
-            const addImage = await Owner.updateOne({ _id: id }, { $set:{ imageUrls : imageUrl } })
+            const addImage = await Owner.updateOne({ _id: id }, { $set: { imageUrls: imageUrl } })
 
-           return res.status(200).json({success: true, message: "Successfully Updated Profile Image", OwnerData})
-        }else{
-          return res.json({success: false, message: "error while Updating Image"})
+            return res.status(200).json({ success: true, message: "Successfully Updated Profile Image", OwnerData })
+        } else {
+            return res.json({ success: false, message: "error while Updating Image" })
         }
     } catch (error) {
         console.log(error);

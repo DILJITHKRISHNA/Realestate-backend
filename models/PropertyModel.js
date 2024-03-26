@@ -73,6 +73,14 @@ const PropertySchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  latitude: {
+    type: Number,
+    required: true
+  },
+  longitude: {
+    type: Number,
+    required: true
+  },
   is_verified: {
     type: Boolean,
   },
