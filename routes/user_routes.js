@@ -52,7 +52,7 @@ router.get('/paymenthistory', UserAuth, PaymentHistory)
 router.post('/paymenthistory/:id', UserAuth, cancelPayment)
 router.post('/resendotp', ResendOtp)
 router.get('/getprofiledata/:id',UserAuth, GetProfileData)
-router.get('/properties/:page', GetPaginateProperty);
+router.get('/properties/:page/:propertyType/:searchTitle/:searchLocation/:minpriceRange/:maxpriceRange', GetPaginateProperty);
 router.post('/wishlist', AddToWishlist);
 router.get('/wishlistdata',UserAuth, getWishlistData);
 router.post('/profileimage/:id', AddProfileImage);

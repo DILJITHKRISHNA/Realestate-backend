@@ -439,9 +439,26 @@ export const GetProfileData = async (req, res) => {
 }
 export const GetPaginateProperty = async (req, res) => {
     try {
-        const { page = 1, pageSize = 6 } = req.params;
+        const { page = 1, pageSize = 6, propertyType, searchTitle, searchLocation, minpriceRange, maxpriceRange } = req.params;
 
-        const PropertyData = await Property.find({ is_hide: false, is_verified: true })
+
+        const query = { is_hide: false, is_verified: true, is_pending: true, is_Booked: false }
+
+        if (propertyType !== "null") {
+            query.type = propertyType;
+        }
+
+        if (searchLocation != 0 || searchTitle != 0) {
+            query.$or = [
+                { location: { $regex: searchLocation, $options: "i" } },
+                { name: { $regex: searchTitle, $options: "i" } },
+            ];
+        }
+        if (minpriceRange != 0 && maxpriceRange != 0) {
+            query.Rent = { $gte: minpriceRange, $lte: maxpriceRange };
+        }
+
+        const PropertyData = await Property.find(query)
             .skip((page - 1) * pageSize)
             .limit(parseInt(pageSize))
             .exec();
@@ -766,3 +783,4 @@ export const ResetPassword = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
+
