@@ -301,11 +301,11 @@ export const PaymentSuccess = async (req, res) => {
         const { data, userId, ownerId } = req.body
         const { id } = req.params
         const rent = await Property.findById({ _id: id })
+        console.log(rent,"7777");
         const booking = await Booking.findOne({ email: data.email })
         if (
             data.name.trim() === "" ||
             data.contact.trim() === "" ||
-            rent.Rent.trim() === "" ||
             data.email.trim() === '' ||
             data.re_location.trim() === ""
         ) {

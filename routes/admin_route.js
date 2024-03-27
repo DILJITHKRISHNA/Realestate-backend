@@ -15,7 +15,8 @@ import {
     PropertyDetails,
     EditCategory,
     GetPaginateProperty,
-    KycApproval
+    KycApproval,
+    GetTotalCount
 } from "../controllers/AdminController.js"
 import { AdminAuth } from '../Middleware/AdminAuth.js'
 
@@ -38,6 +39,7 @@ router.get('/bookingsdata', AdminAuth, getBookingData)
 router.get('/propertylist/:id', AdminAuth, PropertyDetails)
 router.patch('/admin/editcategory/:id', AdminAuth, EditCategory)
 router.get('/properties/:page', GetPaginateProperty);
+router.get('/getcount', GetTotalCount);
 
 
 

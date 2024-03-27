@@ -5,10 +5,9 @@ import Kyc from '../models/KycModel.js'
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import mailSender from '../utils/mailSender.js'
-import mongoose from "mongoose";
-import { isRegExp } from "util/types";
 import Property from "../models/PropertyModel.js";
 import Booking from "../models/BookModel.js"
+import Reserves from '../models/ReserveModal.js'
 
 export const loginAdmin = async (req, res) => {
     console.log("enter to controllerrrrrr");
@@ -249,6 +248,7 @@ export const getPropertydetails = async (req, res) => {
         console.log(error);
     }
 }
+
 export const PropertyStatusUpdate = async (req, res) => {
     console.log("enter to PropertyStatusUpdate controller");
     try {
@@ -262,9 +262,9 @@ export const PropertyStatusUpdate = async (req, res) => {
             let updateData = {};
 
             if (action === 'approve') {
-                updateData = { is_verified: true };
+                updateData = { is_verified: true, is_pending: false };
             } else if (action === 'disapprove') {
-                updateData = { is_verified: false };
+                updateData = { is_verified: false, is_pending: false };
             } else {
                 return res.json({ success: false, message: "Invalid action" });
             }
@@ -370,3 +370,52 @@ export const GetPaginateProperty = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 }
+
+export const GetTotalCount = async (req, res) => {
+    try {
+        const userCount = await User.countDocuments();
+        const ownerCount = await Owner.countDocuments();
+
+        const monthlyBookings = await Booking.aggregate([
+            {
+                $group: {
+                    _id: { $month: { $toDate: "$createdAt" } },
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        const monthlyReservations = await Reserves.aggregate([
+            {
+                $group: {
+                    _id: { $month: { $toDate: "$createdAt" } },
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+
+        const TotalRent = await Booking.aggregate([
+            { $group: { _id: null, totalRent: { $sum: "$Rent" } } }
+        ]);
+        const TotalBookings = await Booking.countDocuments();
+        const TotalReserve = await Reserves.countDocuments();
+
+        return res.status(200).json({
+            success: true,
+            message: "successfully got the counts!",
+            userCount,
+            ownerCount,
+            TotalRent: TotalRent.length > 0 ? TotalRent[0].totalRent : 0,
+            TotalBookings,
+            TotalReserve,
+            monthlyBookings,
+            monthlyReservations
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+};

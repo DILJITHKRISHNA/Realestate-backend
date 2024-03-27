@@ -12,7 +12,7 @@ const PropertySchema = new mongoose.Schema({
     required: true
   },
   Rent: {
-    type: String,
+    type: Number,
     required: true,
   },
   details: {
