@@ -11,6 +11,7 @@ import {
     GetKycData,
     GetPaginateProperty,
     ImageUpload,
+    LoginWithGoogle,
     OwnersendOtp,
     RegisterWithGoogle,
     ResetOwnerPassword,
@@ -33,6 +34,7 @@ router.post('/owner/verify-otp', ownerVerifyOtp)
 router.post('/owner/login', ownerLogin)
 router.post('/owner/profile', OwnerAuth, handleKycData)
 router.post('/owner/ownerRegisterWithGoogle', RegisterWithGoogle)
+router.get('/owner/ownerLoginWithGoogle/:ownerGoogleEmail', LoginWithGoogle)
 router.get('/kyc', OwnerAuth, GetKycData)
 router.post(`/owner/property/:id`, OwnerAuth, AddProperty)
 router.put('/owner/uploadimage', OwnerAuth, ImageUpload)

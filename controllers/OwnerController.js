@@ -229,6 +229,21 @@ export const RegisterWithGoogle = async (req, res) => {
         console.log(error);
     }
 }
+export const LoginWithGoogle = async (req, res) => {
+   
+    try {
+        const { ownerGoogleEmail } = req.params
+        console.log(ownerGoogleEmail,"owner daaaa");
+        const ownerGoogle = await Owner.findOne({email: ownerGoogleEmail, is_google: true})
+        if(ownerGoogle){
+            return res.status(200).json({success: true, message: "Owner Found" ,ownerGoogle}); 
+        }else{
+            return res.json({success: false, message: "Error While checking owner"}); 
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 export const GetKycData = async (req, res) => {
     console.log("enterejhwejrthwejrkjw");
