@@ -594,7 +594,7 @@ export const ShareProperty = async (req, res) => {
         const possibleName = share.email.split('@')[0];
 
         const baseUrl = process.env.NODE_ENV === 'production'
-            ? 'https://your-production-domain.com'//add domain here after hosting
+            ? 'https://aurora.varlet.online'//add domain here after hosting
             : 'http://localhost:5000';
 
         const propertyLink = `${baseUrl}/property/${property._id}`;
