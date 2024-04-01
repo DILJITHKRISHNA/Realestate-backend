@@ -170,6 +170,7 @@ export const GooglAuthRegister = async (req, res) => {
             console.log("GoogleDAta saved Successfully", GoogleData);
 
             if (GoogleData) {
+                let UserToken = jwt.sign({ id: GoogleData._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
                 const token = await createSecretToken(GoogleData._id)
                 res.cookie("token", token, {
                     withCredentials: true,
@@ -179,7 +180,9 @@ export const GooglAuthRegister = async (req, res) => {
                     return res.status(200).json({
                         success: true,
                         message: "User Logged In",
-                        token
+                        token,
+                        UserToken,
+                        GoogleData
                     });
                 }
             }
@@ -195,33 +198,6 @@ export const GooglAuthRegister = async (req, res) => {
     }
 }
 
-export const GooglAuthLogin = async (req, res) => {
-    try {
-        const { email, password } = req.body
-        console.log("pkacjuu");
-        const user = await User.findOne({ email: email })
-        if (user) {
-            const PassMatch = await bcrypt.compare(email, user.email)
-            if (PassMatch) {
-                let token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" })
-                console.log(token, "token ssjsjsjsjsjsj");
-                return res.status(200).json({
-                    success: true,
-                    message: "Google Logged In",
-                    token,
-                    user
-                })
-            } else {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Invalid Password'
-                })
-            }
-        }
-    } catch (error) {
-        console.log(error.message);
-    }
-}
 
 export const GetProperty = async (req, res) => {
     try {
@@ -466,7 +442,6 @@ export const GetPaginateProperty = async (req, res) => {
         const totalProperties = await Property.countDocuments();
         
         if (PropertyData) {
-            console.log(query,"hiiii ethiii");
             const totalPages = Math.ceil(totalProperties / parseInt(pageSize));
             return res.status(200).json({
                 success: true,

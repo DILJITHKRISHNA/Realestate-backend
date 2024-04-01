@@ -16,7 +16,6 @@ import {
     GetPropertyData,
     GetWalletHistory,
     getWishlistData,
-    GooglAuthLogin,
     GooglAuthRegister,
     Payment,
     PaymentHistory,
@@ -42,7 +41,6 @@ router.post('/login', UserLogin)
 router.post('/forgotPassword', forgotPass)
 router.post('/resetpassword', resetPassword)
 router.post('/userRegisterWithGoogle', GooglAuthRegister)
-router.post('/userLoginWithGoogle', GooglAuthLogin)
 router.get('/property/:id', UserAuth, GetProperty)
 router.get('/property', UserAuth, GetPropertyData)
 router.post('/property/bookproperty/:id', UserAuth, CheckIsBooked)
