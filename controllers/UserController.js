@@ -169,28 +169,28 @@ export const GooglAuthRegister = async (req, res) => {
             const GoogleData = await Googleuser.save()
             console.log("GoogleDAta saved Successfully", GoogleData);
 
-            if (GoogleData) {
-                let UserToken = jwt.sign({ id: GoogleData._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
-                const token = await createSecretToken(GoogleData._id)
-                res.cookie("token", token, {
-                    withCredentials: true,
-                    httpOnly: false
-                })
-                if (token) {
-                    return res.status(200).json({
-                        success: true,
-                        message: "User Logged In",
-                        token,
-                        UserToken,
-                        GoogleData
-                    });
-                }
+            let UserToken = jwt.sign({ id: GoogleData._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+            const token = await createSecretToken(GoogleData._id)
+            res.cookie("token", token, {
+                withCredentials: true,
+                httpOnly: false
+            })
+            if (UserToken) {
+                return res.status(200).json({
+                    success: true,
+                    message: "User Logged In",
+                    token,
+                    UserToken,
+                    GoogleData
+                });
             }
         } else {
-            console.log("User Already Exists");
-            return res.json({
-                success: false,
-                message: "User already exists",
+            let UserToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+            return res.status(200).json({
+                success: true,
+                message: "Login data fetched",
+                UserToken,
+                user
             });
         }
     } catch (error) {
@@ -277,7 +277,7 @@ export const PaymentSuccess = async (req, res) => {
         const { data, userId, ownerId } = req.body
         const { id } = req.params
         const rent = await Property.findById({ _id: id })
-        console.log(rent,"7777");
+        console.log(rent, "7777");
         const booking = await Booking.findOne({ email: data.email })
         if (
             data.name.trim() === "" ||
@@ -416,14 +416,14 @@ export const GetProfileData = async (req, res) => {
 export const GetPaginateProperty = async (req, res) => {
     try {
         const { page = 1, pageSize = 6, propertyType, searchTitle, searchLocation, minpriceRange, maxpriceRange } = req.params;
-        
-        
+
+
         const query = { is_hide: false, is_verified: true, is_pending: false, is_Booked: false }
-        
+
         if (propertyType !== "null") {
             query.type = propertyType;
         }
-        
+
         if (searchLocation != 0 || searchTitle != 0) {
             query.$or = [
                 { location: { $regex: searchLocation, $options: "i" } },
@@ -433,14 +433,14 @@ export const GetPaginateProperty = async (req, res) => {
         if (minpriceRange != 0 && maxpriceRange != 0) {
             query.Rent = { $gte: minpriceRange, $lte: maxpriceRange };
         }
-        
+
         const PropertyData = await Property.find(query)
-        .skip((page - 1) * pageSize)
-        .limit(parseInt(pageSize))
-        .exec();
-        
+            .skip((page - 1) * pageSize)
+            .limit(parseInt(pageSize))
+            .exec();
+
         const totalProperties = await Property.countDocuments();
-        
+
         if (PropertyData) {
             const totalPages = Math.ceil(totalProperties / parseInt(pageSize));
             return res.status(200).json({
