@@ -167,7 +167,6 @@ export const GooglAuthRegister = async (req, res) => {
             })
 
             const GoogleData = await Googleuser.save()
-            console.log("GoogleDAta saved Successfully", GoogleData);
 
             let UserToken = jwt.sign({ id: GoogleData._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
             const token = await createSecretToken(GoogleData._id)
