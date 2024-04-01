@@ -440,14 +440,14 @@ export const GetProfileData = async (req, res) => {
 export const GetPaginateProperty = async (req, res) => {
     try {
         const { page = 1, pageSize = 6, propertyType, searchTitle, searchLocation, minpriceRange, maxpriceRange } = req.params;
-
-
-        const query = { is_hide: false, is_verified: true, is_pending: true, is_Booked: false }
-
+        
+        
+        const query = { is_hide: false, is_verified: true, is_pending: false, is_Booked: false }
+        
         if (propertyType !== "null") {
             query.type = propertyType;
         }
-
+        
         if (searchLocation != 0 || searchTitle != 0) {
             query.$or = [
                 { location: { $regex: searchLocation, $options: "i" } },
@@ -457,15 +457,16 @@ export const GetPaginateProperty = async (req, res) => {
         if (minpriceRange != 0 && maxpriceRange != 0) {
             query.Rent = { $gte: minpriceRange, $lte: maxpriceRange };
         }
-
+        
         const PropertyData = await Property.find(query)
-            .skip((page - 1) * pageSize)
-            .limit(parseInt(pageSize))
-            .exec();
-
+        .skip((page - 1) * pageSize)
+        .limit(parseInt(pageSize))
+        .exec();
+        
         const totalProperties = await Property.countDocuments();
-
+        
         if (PropertyData) {
+            console.log(query,"hiiii ethiii");
             const totalPages = Math.ceil(totalProperties / parseInt(pageSize));
             return res.status(200).json({
                 success: true,

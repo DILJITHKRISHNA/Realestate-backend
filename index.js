@@ -11,7 +11,7 @@ import { app, server } from './Socket/Socket.js'
 env.config();
 
 app.use(cors({
-    origin: 'https://varlet-frontend.vercel.app',
+    origin: 'http://localhost:5173',
     methods: ["GET", "POST", "PUT", "PATCH"],
     credentials: true,
 }));
