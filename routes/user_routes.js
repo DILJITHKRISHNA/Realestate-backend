@@ -56,7 +56,7 @@ router.get('/wishlistdata',UserAuth, getWishlistData);
 router.post('/profileimage/:id', AddProfileImage);
 router.put('/editprofile/:id', EditProfileData);
 router.post('/reserve/:propertyId', ReserveProperty);
-router.get('/enquiry',UserAuth, FetchReservations);
+router.get('/enquiry/:userId',UserAuth, FetchReservations);
 router.post('/shareproperty/:propId', ShareProperty);
 router.get('/fetchcategory',UserAuth, FetchCategory);
 router.get('/propertiesData/:id', getPropertyData);

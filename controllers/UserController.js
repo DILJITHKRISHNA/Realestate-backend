@@ -551,7 +551,8 @@ export const ReserveProperty = async (req, res) => {
 
 export const FetchReservations = async (req, res) => {
     try {
-        const enquiryData = await Reserve.find({})
+        const {userId} = req.params
+        const enquiryData = await Reserve.find({UserRef: userId})
         if (enquiryData) {
             return res.status(200).json({ success: true, message: "Data fetched successfully!", enquiryData })
         } else {
