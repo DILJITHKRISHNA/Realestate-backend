@@ -3,7 +3,7 @@ import Owner from "../models/ownerModel.js"
 import Category from "../models/CategoryModel.js";
 import Kyc from '../models/KycModel.js'
 import jwt from "jsonwebtoken"
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import mailSender from '../utils/mailSender.js'
 import Property from "../models/PropertyModel.js";
 import Booking from "../models/BookModel.js"

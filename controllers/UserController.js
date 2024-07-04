@@ -3,7 +3,7 @@ import env from 'dotenv'
 env.config()
 import OTP from '../models/otpModel.js'
 import Property from '../models/PropertyModel.js'
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import createSecretToken from '../utils/secretToken.js'
 import jwt from "jsonwebtoken"
 import Booking from "../models/BookModel.js";

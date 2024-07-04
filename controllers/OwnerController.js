@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import createSecretToken from '../utils/secretToken.js'
 import Owner from "../models/ownerModel.js";
 import OTP from "../models/otpModel.js";
