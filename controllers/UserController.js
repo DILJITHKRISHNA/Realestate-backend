@@ -76,11 +76,8 @@ export const registerUser = async (req, res) => {
 export const UserLogin = async (req, res) => {
     try {
 
-        console.log("fgfdddddddddddddddddddddddddddd");
         const { email, password } = req.body;
-        console.log(email, password, "emailllllllllllllllllllllllllll");
         const userExist = await User.findOne({ email: email });
-
 
         if (!userExist) {
             return res.json({
@@ -253,7 +250,6 @@ export const Payment = async (req, res) => {
         console.log(id, "idddddd");
         const stripe = new Stripe(process.env.STRIPE_KEY)
         const property = await Property.findById({ _id: id })
-        console.log(property, "propertyy");
         const RentAmount = property.Rent
 
         const paymentIntent = await stripe.paymentIntents.create({
@@ -551,8 +547,8 @@ export const ReserveProperty = async (req, res) => {
 
 export const FetchReservations = async (req, res) => {
     try {
-        const {userId} = req.params
-        const enquiryData = await Reserve.find({UserRef: userId})
+        const { userId } = req.params
+        const enquiryData = await Reserve.find({ UserRef: userId })
         if (enquiryData) {
             return res.status(200).json({ success: true, message: "Data fetched successfully!", enquiryData })
         } else {

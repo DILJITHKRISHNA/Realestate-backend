@@ -167,7 +167,8 @@ export const UserblockHandle = async (req, res) => {
     try {
         const { id } = req.params
         const UserData = await User.findOne({ _id: id })
-
+        UserData.is_block = !UserData.is_block
+        UserData.save()        
         if (UserData.is_block) {
             const Updatedata = await User.updateOne(
                 { _id: id },
