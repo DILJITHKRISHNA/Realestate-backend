@@ -247,7 +247,6 @@ export const CheckIsBooked = async (req, res) => {
 export const Payment = async (req, res) => {
     try {
         const { id } = req.params
-        console.log(id, "idddddd");
         const stripe = new Stripe(process.env.STRIPE_KEY)
         const property = await Property.findById({ _id: id })
         const RentAmount = property.Rent
