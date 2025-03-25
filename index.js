@@ -32,7 +32,7 @@ app.use('/owner', OwnerRoute)
 app.use('/admin', AdminRoute)
 app.use('/chat', ChatRoute)
 app.use('/message', MessageRoute)
-
+ 
 app.use((err, req, res, next) => {
     console.log(err);
     res.status(500).send('Error occurred, check it out');
